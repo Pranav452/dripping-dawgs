@@ -2,9 +2,14 @@
 import { supabase } from '@/lib/supabase'
 import { useCartStore } from '@/store/cart'
 import Link from 'next/link'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { ProductSearch } from './ProductSearch'
 import Image from 'next/image'
+
+interface Category {
+  id: string
+  name: string
+}
 
 interface Product {
   id: string
@@ -25,12 +30,11 @@ interface Product {
 
 export function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<any[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
-  const addItem = useCartStore((state) => state.addItem)
-  const items = useCartStore((state) => state.items)
+  const { addItem, items } = useCartStore()
 
-  const fetchProducts = useCallback(async (search = '', category = '', sort = 'newest') => {
+  const fetchProducts = async (search = '', category = '', sort = 'newest') => {
     let query = supabase
       .from('products')
       .select(`
@@ -40,17 +44,14 @@ export function ProductGrid() {
         )
       `)
 
-    // Apply search filter
     if (search) {
       query = query.ilike('name', `%${search}%`)
     }
 
-    // Apply category filter
     if (category) {
       query = query.eq('category_id', category)
     }
 
-    // Apply sorting
     switch (sort) {
       case 'price_asc':
         query = query.order('price', { ascending: true })
@@ -67,7 +68,7 @@ export function ProductGrid() {
 
     const { data } = await query
     if (data) setProducts(data)
-  }, [])
+  }
 
   useEffect(() => {
     async function fetchCategories() {
@@ -81,7 +82,7 @@ export function ProductGrid() {
     fetchCategories()
     fetchProducts()
     setLoading(false)
-  }, [fetchProducts])
+  }, [])
 
   const isInCart = (productId: string) => {
     return items.some(item => item.id === productId)
@@ -96,27 +97,46 @@ export function ProductGrid() {
         onSearch={fetchProducts}
       />
 
-      {/* Featured Products */}
-      {products.some(p => p.featured) && (
-        <div className="mb-12">
-          <h2 className="mb-6 text-2xl font-bold">Featured Collection</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {products
-              .filter(p => p.featured)
-              .map((product) => (
-                <FeaturedProductCard key={product.id} product={product} />
-              ))}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {products.map((product) => (
+          <div key={product.id} className="group relative rounded-lg border p-4 transition-all hover:shadow-lg">
+            <Link href={`/products/${product.id}`} className="block aspect-square overflow-hidden">
+              <Image
+                src={product.image_url}
+                alt={product.name}
+                width={400}
+                height={400}
+                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
+            </Link>
+            <div className="mt-4">
+              <span className="text-sm text-gray-500">
+                {product.categories?.name}
+              </span>
+              <Link href={`/products/${product.id}`}>
+                <h3 className="text-lg font-semibold hover:underline">{product.name}</h3>
+              </Link>
+              <p className="mt-1 text-gray-600">${product.price}</p>
+              <button 
+                className={`mt-4 w-full rounded px-4 py-2 text-white transition-colors ${
+                  isInCart(product.id) 
+                    ? 'bg-gray-500 cursor-not-allowed' 
+                    : 'bg-black hover:bg-gray-800'
+                }`}
+                onClick={() => !isInCart(product.id) && addItem({
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  quantity: 1,
+                  image_url: product.image_url
+                })}
+                disabled={isInCart(product.id)}
+              >
+                {isInCart(product.id) ? 'In Cart' : 'Add to Cart'}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* All Products */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
-        {products
-          .filter(p => !p.featured)
-          .map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        ))}
       </div>
 
       {products.length === 0 && (
@@ -124,95 +144,6 @@ export function ProductGrid() {
           <p className="text-gray-600">No products found</p>
         </div>
       )}
-    </div>
-  )
-}
-
-function ProductCard({ product }: { product: Product }) {
-  const addItem = useCartStore((state) => state.addItem)
-  const items = useCartStore((state) => state.items)
-  const isInCart = items.some(item => item.id === product.id)
-
-  return (
-    <div className="group relative overflow-hidden rounded-lg border bg-white">
-      <Link href={`/products/${product.id}`}>
-        <div className="aspect-square overflow-hidden">
-          <Image
-            src={product.image_url}
-            alt={product.name}
-            width={400}
-            height={400}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-      </Link>
-
-      <div className="p-4">
-        <Link href={`/products/${product.id}`}>
-          <div className="mb-1 text-sm text-gray-500">{product.brand}</div>
-          <h3 className="font-medium group-hover:underline">{product.name}</h3>
-          <div className="mt-1 text-lg font-semibold">${product.price}</div>
-        </Link>
-
-        <div className="mt-2 flex flex-wrap gap-1">
-          {product.colors.map((color) => (
-            <div
-              key={color}
-              className="h-4 w-4 rounded-full border"
-              style={{ backgroundColor: color.toLowerCase() }}
-              title={color}
-            />
-          ))}
-        </div>
-
-        <div className="mt-2 text-sm text-gray-500">
-          {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
-        </div>
-
-        <button
-          className={`mt-3 w-full rounded-md px-4 py-2 text-sm font-medium text-white transition-colors ${
-            isInCart || product.stock === 0
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-black hover:bg-gray-800'
-          }`}
-          onClick={() => !isInCart && product.stock > 0 && addItem({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            quantity: 1,
-            image_url: product.image_url
-          })}
-          disabled={isInCart || product.stock === 0}
-        >
-          {product.stock === 0 ? 'Out of Stock' : isInCart ? 'In Cart' : 'Add to Cart'}
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function FeaturedProductCard({ product }: { product: Product }) {
-  // Similar to ProductCard but with larger layout
-  return (
-    <div className="group relative overflow-hidden rounded-lg border bg-white">
-      <Link href={`/products/${product.id}`}>
-        <div className="aspect-[4/5] overflow-hidden">
-          <Image
-            src={product.image_url}
-            alt={product.name}
-            width={600}
-            height={750}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
-      </Link>
-
-      {/* Featured badge */}
-      <div className="absolute left-4 top-4 rounded-full bg-black px-3 py-1 text-sm text-white">
-        Featured
-      </div>
-
-      {/* Rest of the card content similar to ProductCard */}
     </div>
   )
 }

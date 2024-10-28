@@ -35,28 +35,23 @@ const products: ProductData[] = [
 ]
 
 async function uploadImage(filePath: string): Promise<string> {
-  try {
-    const fileName = path.basename(filePath)
-    const fileBuffer = fs.readFileSync(filePath)
-    
-    const { data, error } = await supabaseAdmin.storage
-      .from('products')
-      .upload(fileName, fileBuffer, {
-        contentType: 'image/jpeg',
-        upsert: true
-      })
+  const fileName = path.basename(filePath)
+  const fileBuffer = fs.readFileSync(filePath)
+  
+  const { error, data: uploadData } = await supabaseAdmin.storage
+    .from('products')
+    .upload(fileName, fileBuffer, {
+      contentType: 'image/jpeg',
+      upsert: true
+    })
 
-    if (error) throw error
-    
-    const { data: { publicUrl } } = supabaseAdmin.storage
-      .from('products')
-      .getPublicUrl(fileName)
+  if (error) throw error
+  
+  const { data: { publicUrl } } = supabaseAdmin.storage
+    .from('products')
+    .getPublicUrl(fileName)
 
-    return publicUrl
-  } catch (error) {
-    console.error('Error uploading image:', error)
-    throw error
-  }
+  return publicUrl
 }
 
 async function getOrCreateCategory(categoryName: string) {

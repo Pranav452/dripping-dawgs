@@ -7,7 +7,7 @@ import Link from 'next/link'
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   const { signIn } = useAuth()
   const router = useRouter()
 
@@ -19,15 +19,17 @@ export default function LoginPage() {
       sessionStorage.removeItem('redirectAfterLogin')
       router.push(redirectUrl)
     } catch (error) {
-      setError('Invalid email or password')
+      setErrorMessage('Invalid email or password')
     }
   }
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
       <h1 className="mb-8 text-3xl font-bold">Login</h1>
-      {error && (
-        <div className="mb-4 rounded bg-red-100 p-3 text-red-700">{error}</div>
+      {errorMessage && (
+        <div className="mb-4 rounded bg-red-100 p-3 text-red-700">
+          {errorMessage}
+        </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
