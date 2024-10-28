@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCartStore } from '@/store/cart'
 import { useAuth } from '@/lib/auth'
 import { useState, useRef, useEffect } from 'react'
+import { ModeToggle } from './mode-toggle'
 
 export function Header() {
   const items = useCartStore((state) => state.items)
@@ -54,11 +55,14 @@ export function Header() {
             Cart ({itemCount})
           </Link>
           
+          {/* Mode Toggle */}
+          <ModeToggle />
+          
           {/* Profile Dropdown */}
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
               {user ? (
                 <span className="text-sm font-medium">
@@ -82,7 +86,7 @@ export function Header() {
             </button>
 
             {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 rounded-md border bg-white py-1 shadow-lg">
+              <div className="absolute right-0 mt-2 w-48 rounded-md border bg-white py-1 shadow-lg dark:bg-gray-800">
                 {user ? (
                   <>
                     <div className="border-b px-4 py-2">
@@ -93,14 +97,14 @@ export function Header() {
                     </div>
                     <Link
                       href="/profile"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       Profile Settings
                     </Link>
                     <Link
                       href="/orders"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       My Orders
@@ -108,7 +112,7 @@ export function Header() {
                     {isAdmin && (
                       <Link
                         href="/dashboard"
-                        className="block px-4 py-2 text-sm hover:bg-gray-100"
+                        className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                         onClick={() => setIsProfileOpen(false)}
                       >
                         Dashboard
@@ -116,7 +120,7 @@ export function Header() {
                     )}
                     <button
                       onClick={handleSignOut}
-                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
+                      className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       Sign Out
                     </button>
@@ -125,14 +129,14 @@ export function Header() {
                   <>
                     <Link
                       href="/login"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       Sign In
                     </Link>
                     <Link
                       href="/signup"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
+                      className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setIsProfileOpen(false)}
                     >
                       Create Account

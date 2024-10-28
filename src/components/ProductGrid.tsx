@@ -99,29 +99,29 @@ export function ProductGrid() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {products.map((product) => (
-          <div key={product.id} className="group relative rounded-lg border p-4 transition-all hover:shadow-lg">
+          <div key={product.id} className="group relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-lg">
             <Link href={`/products/${product.id}`} className="block aspect-square overflow-hidden">
               <Image
                 src={product.image_url}
                 alt={product.name}
                 width={400}
                 height={400}
-                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             </Link>
-            <div className="mt-4">
-              <span className="text-sm text-gray-500">
+            <div className="p-4">
+              <span className="text-sm text-muted-foreground">
                 {product.categories?.name}
               </span>
               <Link href={`/products/${product.id}`}>
-                <h3 className="text-lg font-semibold hover:underline">{product.name}</h3>
+                <h3 className="mt-1 font-semibold hover:underline">{product.name}</h3>
               </Link>
-              <p className="mt-1 text-gray-600">${product.price}</p>
+              <p className="mt-1 text-muted-foreground">${product.price}</p>
               <button 
-                className={`mt-4 w-full rounded px-4 py-2 text-white transition-colors ${
+                className={`mt-4 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                   isInCart(product.id) 
-                    ? 'bg-gray-500 cursor-not-allowed' 
-                    : 'bg-black hover:bg-gray-800'
+                    ? 'bg-secondary text-secondary-foreground cursor-not-allowed' 
+                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
                 }`}
                 onClick={() => !isInCart(product.id) && addItem({
                   id: product.id,
@@ -140,8 +140,8 @@ export function ProductGrid() {
       </div>
 
       {products.length === 0 && (
-        <div className="text-center">
-          <p className="text-gray-600">No products found</p>
+        <div className="text-center text-muted-foreground">
+          <p>No products found</p>
         </div>
       )}
     </div>

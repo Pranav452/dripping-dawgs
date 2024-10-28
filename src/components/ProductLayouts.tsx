@@ -169,10 +169,52 @@ export function ProductLayout({ product, variant = 'default' }: ProductLayoutPro
       <ProductGallery images={product.images} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">{product.name}</h1>
-          <p className="mt-2 text-xl">${product.price}</p>
+          <p className="text-lg text-muted-foreground">{product.brand}</p>
+          <h1 className="text-3xl font-bold">{product.name}</h1>
+          <p className="mt-2 text-2xl">${product.price}</p>
         </div>
-        {/* Rest of the default layout */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <p className="font-medium">Select Size</p>
+            <div className="flex flex-wrap gap-2">
+              {product.size_available.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`rounded-md px-4 py-2 ${
+                    selectedSize === size
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border hover:border-primary'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            className={`w-full rounded-md px-6 py-3 ${
+              isInCart || !selectedSize
+                ? 'bg-secondary text-secondary-foreground cursor-not-allowed'
+                : 'bg-primary text-primary-foreground hover:bg-primary/90'
+            }`}
+            disabled={isInCart || !selectedSize}
+            onClick={() => {
+              if (selectedSize) {
+                addItem({
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  quantity: 1,
+                  image_url: product.images[0].url,
+                  size: selectedSize
+                })
+              }
+            }}
+          >
+            {isInCart ? 'In Cart' : 'Add to Cart'}
+          </button>
+        </div>
       </div>
     </div>
   )
