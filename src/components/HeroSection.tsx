@@ -1,27 +1,17 @@
 'use client'
 import { useRouter } from 'next/navigation'
+import { Scene3D } from './Scene3D'
 
 export function HeroSection() {
   const router = useRouter()
 
   return (
-    <div className="relative h-[70vh] bg-gray-900">
-      <div className="absolute inset-0 bg-black/50" />
-      <div className="relative z-10 flex h-full items-center justify-center text-center">
-        <div className="max-w-3xl px-4">
-          <h1 className="mb-6 text-5xl font-bold text-white">
-            Discover Your Style
-          </h1>
-          <p className="mb-8 text-xl text-gray-200">
-            Explore our collection of premium clothing and accessories
-          </p>
-          <button 
-            onClick={() => router.push('/products')}
-            className="rounded-md bg-white px-6 py-3 text-lg font-semibold text-gray-900 hover:bg-gray-100"
-          >
-            Shop Now
-          </button>
-        </div>
+    <div className="relative h-[92vh]">
+      <div className="absolute inset-0">
+        <Scene3D />
+      </div>
+      <div className="absolute bottom-0 w-full bg-yellow-400 text-black py-3 text-center font-medium">
+        FREE SHIPPING ON ALL ORDERS OVER ₹1499 | SHOP NOW
       </div>
     </div>
   )
