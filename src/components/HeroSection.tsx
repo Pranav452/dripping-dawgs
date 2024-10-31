@@ -1,10 +1,7 @@
 'use client'
-import { useRouter } from 'next/navigation'
 import { Scene3D } from './Scene3D'
 
 export function HeroSection() {
-  const router = useRouter()
-
   return (
     <div className="relative h-[92vh]">
       <div className="absolute inset-0">

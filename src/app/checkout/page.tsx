@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function CheckoutPage() {
-  const { items, clearCart } = useCartStore()
+  const { items } = useCartStore()
   const { user } = useAuth()
   const router = useRouter()
   const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)

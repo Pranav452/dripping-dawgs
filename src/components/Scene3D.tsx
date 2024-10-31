@@ -6,7 +6,20 @@ import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
-const environments = [
+// Define valid environment presets
+type EnvironmentPreset = 
+  | "apartment" 
+  | "city" 
+  | "dawn" 
+  | "forest" 
+  | "lobby" 
+  | "night" 
+  | "park" 
+  | "studio" 
+  | "sunset" 
+  | "warehouse"
+
+const environments: EnvironmentPreset[] = [
   "apartment",
   "city",
   "dawn",
@@ -19,7 +32,7 @@ const environments = [
   "warehouse",
 ]
 
-function Scene({ environment }: { environment: string }) {
+function Scene({ environment }: { environment: EnvironmentPreset }) {
   const torusRef = useRef<THREE.Mesh>(null)
 
   useFrame((state, delta) => {
@@ -30,7 +43,10 @@ function Scene({ environment }: { environment: string }) {
 
   return (
     <>
-      <Environment preset={environment as any} background />
+      <Environment 
+        preset={environment} 
+        background 
+      />
       <mesh ref={torusRef}>
         <torusKnotGeometry args={[0.7, 0.3, 128, 32]} />
         <meshStandardMaterial metalness={0.9} roughness={0.1} />

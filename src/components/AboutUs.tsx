@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 export function AboutUs() {
   return (
     <section className="bg-gray-50">
@@ -32,11 +34,11 @@ export function AboutUs() {
           </div>
           <div className="relative h-[500px]">
             <div className="absolute inset-0 bg-black/5 rounded-lg"></div>
-            {/* Add your about image here */}
-            <img
+            <Image
               src="/about-image.jpg"
               alt="About Dripping Dawgs"
-              className="rounded-lg object-cover w-full h-full"
+              fill
+              className="rounded-lg object-cover"
             />
           </div>
         </div>

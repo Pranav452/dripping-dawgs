@@ -13,20 +13,19 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     try {
       await signUp(email, password)
       router.push('/login?message=Please check your email to verify your account')
-    } catch (error) {
-      setError('Error creating account')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error creating account')
     }
   }
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
       <h1 className="mb-8 text-3xl font-bold">Sign Up</h1>
-      {error && (
-        <div className="mb-4 rounded bg-red-100 p-3 text-red-700">{error}</div>
-      )}
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700">
