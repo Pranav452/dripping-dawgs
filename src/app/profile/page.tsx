@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion } from 'framer-motion'
+import { toast } from "sonner"
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
@@ -17,6 +18,17 @@ export default function ProfilePage() {
       router.push('/login')
     }
   }, [user, router])
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      toast.success("Signed out successfully")
+      router.push('/login')
+    } catch (error) {
+      toast.error("Error signing out")
+      console.error("Sign out error:", error)
+    }
+  }
 
   const mockUserData = {
     name: "John Doe",
@@ -83,7 +95,11 @@ export default function ProfilePage() {
             <Button variant="outline" className="flex items-center gap-2">
               <Edit className="h-4 w-4" /> Edit Profile
             </Button>
-            <Button variant="destructive" className="flex items-center gap-2">
+            <Button 
+              variant="destructive" 
+              className="flex items-center gap-2"
+              onClick={handleSignOut}
+            >
               <LogOut className="h-4 w-4" /> Sign Out
             </Button>
           </div>

@@ -12,7 +12,7 @@ export function OurServices() {
     {
       title: "BEST QUALITY",
       description: "Premium materials and expert craftsmanship guarantee lasting quality in every piece",
-      image: "/Bestquality.png"
+      image: "/BestQuality.png"
     },
     {
       title: "24/7 ONLINE CHAT SUPPORT",
