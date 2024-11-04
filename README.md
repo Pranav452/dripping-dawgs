@@ -162,7 +162,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Support
 
-For support, email support@drippingdawgs.com or visit our [Contact Page](http://localhost:3000/contact).
+For support, email support@drippingdawgs.com or visit our [Contact Page](https://dripping-dawgs.vercel.app/contact).
 
 ---
 
