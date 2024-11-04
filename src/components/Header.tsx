@@ -16,7 +16,7 @@ export function Header() {
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <Image 
-            src="/public/LOGO(1).png" 
+            src="/LOGO.png" 
             alt="DQ Logo" 
             width={50} 
             height={50} 

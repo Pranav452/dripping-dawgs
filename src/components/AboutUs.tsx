@@ -35,7 +35,7 @@ export function AboutUs() {
           <div className="relative h-[300px] md:h-[500px] mt-8 md:mt-0">
             <div className="absolute inset-0 bg-black/5 rounded-lg"></div>
             <Image
-              src="/about-image.jpg"
+              src="/LOGO.png"
               alt="About Dripping Dawgs"
               fill
               className="rounded-lg object-cover"

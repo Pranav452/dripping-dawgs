@@ -1,47 +1,98 @@
+'use client'
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+
 export function OurServices() {
   const services = [
     {
-      title: "Custom Designs",
-      description: "Get unique, personalized designs tailored to your style and preferences",
-      icon: "🎨"
+      title: "DELIVERY ON TIME",
+      description: "Swift and reliable delivery service ensuring your Dripping Dogs gear reaches you exactly when promised",
+      image: "/DOT.png"
     },
     {
-      title: "Premium Quality",
-      description: "All our products are made with the highest quality materials for lasting comfort",
-      icon: "⭐"
+      title: "BEST QUALITY",
+      description: "Premium materials and expert craftsmanship guarantee lasting quality in every piece",
+      image: "/Bestquality.png"
     },
     {
-      title: "Fast Shipping",
-      description: "Quick and reliable shipping to get your favorite designs to you faster",
-      icon: "🚚"
-    },
-    {
-      title: "24/7 Support",
-      description: "Our customer service team is always here to help with any questions",
-      icon: "💬"
+      title: "24/7 ONLINE CHAT SUPPORT",
+      description: "Round-the-clock customer service ready to assist you with any questions or concerns",
+      image: "/22.png"
     }
   ]
 
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-16">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4">Our Services</h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          We provide comprehensive services to ensure you get the best shopping experience
-        </p>
-      </div>
+  const wobbleAnimation = {
+    initial: { rotate: 0 },
+    wobble: {
+      rotate: [0, -3, 3, -3, 3, 0],
+      transition: {
+        duration: 0.5,
+        ease: "easeInOut",
+        repeat: 0
+      }
+    }
+  }
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {services.map((service, index) => (
-          <div 
-            key={index}
-            className="p-6 rounded-lg border hover:shadow-lg transition-shadow duration-300"
-          >
-            <div className="text-4xl mb-4">{service.icon}</div>
-            <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-            <p className="text-gray-600">{service.description}</p>
-          </div>
-        ))}
+  return (
+    <section className="bg-yellow-400 py-12">
+      <div className="mx-auto max-w-7xl px-4">
+        <motion.h2 
+          className="text-3xl font-bold text-center mb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          Our Services
+        </motion.h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {services.map((service, index) => (
+            <motion.div 
+              key={index}
+              className="flex flex-col items-center"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.5,
+                delay: index * 0.2 
+              }}
+              whileHover="wobble"
+              variants={wobbleAnimation}
+            >
+              <motion.div 
+                className="relative w-full aspect-square mb-6 bg-yellow-400"
+                whileHover={{ 
+                  scale: 1.05,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </motion.div>
+              <motion.h3 
+                className="text-xl font-bold text-center mb-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 + index * 0.2 }}
+              >
+                {service.title}
+              </motion.h3>
+              <motion.p 
+                className="text-center text-gray-800"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 + index * 0.2 }}
+              >
+                {service.description}
+              </motion.p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   )
