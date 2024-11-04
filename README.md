@@ -1,36 +1,169 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐕 Dripping Dawgs
 
-## Getting Started
+A modern e-commerce platform for premium streetwear and fashion, built with Next.js 14.
 
-First, run the development server:
+## 🌟 Features
 
+- 🛍️ Full E-commerce Functionality
+  - Product catalog with filtering and search
+  - Shopping cart management
+  - Secure checkout process
+  - Order tracking
+
+- 👤 User Management
+  - Authentication with email
+  - User profiles
+  - Order history
+  - Wishlist functionality
+
+- 💫 Modern UI/UX
+  - Responsive design
+  - Dark/Light mode
+  - Animated transitions using Framer Motion
+  - Toast notifications
+  - Interactive product galleries
+
+- 🔧 Technical Features
+  - Server-side rendering with Next.js
+  - Supabase backend integration
+  - Real-time updates
+  - Image optimization
+  - Form validation with Zod
+  - Styled with Tailwind CSS
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+```bash
+git clone [repository-url]
+cd dripping-dawgs
+```
+
+2. **Install dependencies**
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. **Set up environment variables**
+Create a `.env.local` file in the root directory and add:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+4. **Run the development server**
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Frontend Framework**: Next.js 14
+- **Styling**: 
+  - Tailwind CSS
+  - Shadcn UI Components
+  - Radix UI Primitives
+- **State Management**: 
+  - Zustand for cart and UI state
+  - React Context for auth
+- **Database & Backend**: 
+  - Supabase for data storage
+  - Supabase Auth for authentication
+- **Forms & Validation**: 
+  - React Hook Form
+  - Zod schema validation
+- **UI/UX**: 
+  - Framer Motion for animations
+  - Lucide React for icons
+  - Sonner for toast notifications
 
-## Learn More
+## 📁 Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/             # Next.js app router pages
+├── components/      # Reusable components
+│   ├── ui/         # Shadcn UI components
+│   └── motion/     # Animation components
+├── lib/            # Utility functions
+├── hooks/          # Custom React hooks
+├── store/          # Zustand stores
+└── types/          # TypeScript types
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔧 Available Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev         # Start development server
+npm run build       # Build for production
+npm run start       # Start production server
+npm run lint        # Run ESLint
+npm run lint:fix    # Fix ESLint errors
+npm run clean       # Clean build files
+```
 
-## Deploy on Vercel
+## 🎨 Styling
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project uses Tailwind CSS with a custom configuration:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Custom color schemes
+- Responsive design utilities
+- Animation classes
+- Shadcn UI integration
+- Custom font configuration (Geist Sans & Mono)
+
+## 🔒 Authentication
+
+User authentication is handled through Supabase Auth, providing:
+
+- Email/Password authentication
+- Protected routes
+- Persistent sessions
+- User profile management
+
+## 🛍️ E-commerce Features
+
+- Product catalog with categories
+- Shopping cart with persistent state
+- Secure checkout process
+- Order tracking
+- Wishlist functionality
+- User reviews and ratings
+
+## 📱 Responsive Design
+
+The site is fully responsive and optimized for:
+- Mobile devices
+- Tablets
+- Desktop computers
+- Large screens
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👥 Support
+
+For support, email support@drippingdawgs.com or visit our [Contact Page](http://localhost:3000/contact).
+
+---
+
+Built with ❤️ by the Dripping Dawgs Team
