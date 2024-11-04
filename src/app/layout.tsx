@@ -7,6 +7,7 @@ import { AuthProvider } from '@/lib/auth'
 import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { Toaster } from 'sonner'
 import { PageWrapper } from '@/components/motion/PageWrapper'
+import { Dancing_Script } from "next/font/google";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,6 +18,11 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+const dancingScript = Dancing_Script({ 
+  subsets: ['latin'],
+  variable: '--font-dancing-script',
 });
 
 export const metadata: Metadata = {
@@ -31,7 +37,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} antialiased`}>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
             <AnnouncementBanner />
