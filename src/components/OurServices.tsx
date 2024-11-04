@@ -72,6 +72,7 @@ export function OurServices() {
                   fill
                   className="object-contain"
                   priority
+                  unoptimized
                 />
               </motion.div>
               <motion.h3 
