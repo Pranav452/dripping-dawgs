@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { Slot } from "@radix-ui/react-slot"
 
 export const SidebarContext = React.createContext<{
   isOpen: boolean
@@ -102,10 +103,15 @@ export function SidebarMenuItem({ children }: { children: React.ReactNode }) {
 export function SidebarMenuButton({
   children,
   className,
-  asChild,
+  asChild = false,
   ...props
-}: React.ComponentProps<"button"> & { asChild?: boolean }) {
-  const Comp = asChild ? "div" : "button"
+}: {
+  children: React.ReactNode
+  className?: string
+  asChild?: boolean
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const Comp = asChild ? Slot : "button"
+  
   return (
     <Comp
       className={cn(
