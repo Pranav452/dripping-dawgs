@@ -1,4 +1,4 @@
-# 🐕 Dripping Dawgs
+# 🐕 Dripping Dogs
 
 A modern e-commerce platform for premium streetwear and fashion, built with Next.js 14.
 
@@ -36,7 +36,7 @@ A modern e-commerce platform for premium streetwear and fashion, built with Next
 1. **Clone the repository**
 ```bash
 git clone [repository-url]
-cd dripping-dawgs
+cd dripping-dogs
 ```
 
 2. **Install dependencies**
@@ -162,8 +162,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Support
 
-For support, email support@drippingdawgs.com or visit our [Contact Page](https://dripping-dawgs.vercel.app/contact).
+For support, email support@drippingdogs.com or visit our [Contact Page](https://dripping-dogs.vercel.app/contact).
 
 ---
 
-Built with ❤️ by the Dripping Dawgs Team
+Built with ❤️ by the Dripping Dogs Team
