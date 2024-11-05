@@ -34,7 +34,7 @@ export function OurServices() {
   }
 
   return (
-    <section className="bg-yellow-400 pb-12"><br /><br />
+    <section className="bg-yellow-400 py-12">
       <div className="mx-auto max-w-7xl px-4">
         <motion.h2 
           className="text-3xl font-bold text-center mb-12"
