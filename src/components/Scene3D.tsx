@@ -50,7 +50,13 @@ function Scene({ environment }: { environment: string }) {
 
   return (
     <>
-      <Environment preset={environment as any} background />
+      <Environment 
+        preset={environment as 
+          "apartment" | "city" | "dawn" | "forest" | "lobby" | 
+          "night" | "park" | "studio" | "sunset" | "warehouse"
+        } 
+        background 
+      />
       <Center ref={textRef}>
         <group position={[0, 0.8, 0]}>
           <Text3D

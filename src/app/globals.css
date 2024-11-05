@@ -87,3 +87,25 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Add this to your existing CSS */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Add these styles to your existing CSS */
+.logo-spin {
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Optional: Add a gradient background to the loading screen */
+.loading-screen-bg {
+  background: linear-gradient(to right, #000000, #1a1a1a);
+}

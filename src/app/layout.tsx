@@ -8,6 +8,8 @@ import { AnnouncementBanner } from '@/components/AnnouncementBanner'
 import { Toaster } from 'sonner'
 import { PageWrapper } from '@/components/motion/PageWrapper'
 import { Dancing_Script } from "next/font/google";
+import { SmoothScroll } from '@/components/motion/SmoothScroll'
+import { LoadingScreen } from '@/components/LoadingScreen'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,18 +40,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${dancingScript.variable} antialiased`}>
-        <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <AnnouncementBanner />
-            <Header />
-            <main className="flex-grow">
-              <PageWrapper>
-                {children}
-              </PageWrapper>
-            </main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <LoadingScreen />
+        <SmoothScroll>
+          <AuthProvider>
+            <div className="flex flex-col min-h-screen">
+              <AnnouncementBanner />
+              <Header />
+              <main className="flex-grow">
+                <PageWrapper>
+                  {children}
+                </PageWrapper>
+              </main>
+              <Footer />
+            </div>
+          </AuthProvider>
+        </SmoothScroll>
         <Toaster />
       </body>
     </html>

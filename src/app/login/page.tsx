@@ -19,7 +19,7 @@ export default function LoginPage() {
       const redirectUrl = sessionStorage.getItem('redirectAfterLogin') || '/'
       sessionStorage.removeItem('redirectAfterLogin')
       router.push(redirectUrl)
-    } catch (error) {
+    } catch (_error) {
       setErrorMessage('Invalid email or password')
     }
   }
