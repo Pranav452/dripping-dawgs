@@ -36,15 +36,14 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span 
-              className="text-3xl font-normal tracking-wide font-dancing-script hover:text-yellow-400 transition-colors"
-              style={{ fontFamily: 'Dancing Script, cursive' }}
-            >
-              Dripping dogs
-            </span>
+          <Link 
+            href="/" 
+            className="text-3xl font-normal tracking-wide hover:text-yellow-400 transition-colors font-dancing-script"
+            style={{ fontFamily: 'Dancing Script, cursive' }}
+          >
+            Dripping dogs
           </Link>
-          <button 
+            <button 
             onClick={() => setIsOpen(false)}
             className="p-2 hover:bg-yellow-400 hover:text-black rounded-md transition-colors"
           >

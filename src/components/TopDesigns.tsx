@@ -100,7 +100,7 @@ export function TopDesigns() {
 
   if (isLoading) {
     return (
-      <section className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gray-100 pb-12 px-4 sm:px-6 lg:px-8"><br />
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <Skeleton className="h-8 w-64 mx-auto mb-4" />
@@ -131,7 +131,7 @@ export function TopDesigns() {
   }
 
   return (
-    <section className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <section className="bg-gray-100 pb-12 px-4 sm:px-6 lg:px-8"><br /><br />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Featured Designs This Week</h2>

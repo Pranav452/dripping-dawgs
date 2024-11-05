@@ -2,7 +2,7 @@
 import * as THREE from 'three'
 import { useState, useRef, useEffect } from "react"
 import { Canvas, useFrame } from "@react-three/fiber"
-import { Environment, OrbitControls, PerspectiveCamera } from "@react-three/drei"
+import { Environment, OrbitControls, PerspectiveCamera, Text3D, Center } from "@react-three/drei"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
@@ -40,22 +40,63 @@ function useIsMobile() {
 }
 
 function Scene({ environment }: { environment: string }) {
-  const torusRef = useRef<THREE.Mesh>(null)
+  const textRef = useRef<THREE.Group>(null)
 
   useFrame((state, delta) => {
-    if (torusRef.current) {
-      torusRef.current.rotation.y += delta * 0.5
+    if (textRef.current) {
+      textRef.current.rotation.y += delta * 0.2
     }
   })
 
   return (
     <>
       <Environment preset={environment as any} background />
-      <mesh ref={torusRef}>
-        <torusKnotGeometry args={[0.7, 0.3, 128, 32]} />
-        <meshStandardMaterial metalness={0.9} roughness={0.1} />
-      </mesh>
-      <directionalLight position={[5, 5, 5]} intensity={0.5} />
+      <Center ref={textRef}>
+        <group position={[0, 0.8, 0]}>
+          <Text3D
+            font="/fonts/Inter_Bold.json"
+            size={0.6}
+            height={0.3}
+            curveSegments={12}
+            bevelEnabled
+            bevelThickness={0.02}
+            bevelSize={0.02}
+            bevelOffset={0}
+            bevelSegments={5}
+          >
+            DRIPPING
+            <meshStandardMaterial 
+              metalness={1}
+              roughness={0}
+              color="#000000"
+              envMapIntensity={1}
+            />
+          </Text3D>
+        </group>
+        <group position={[0, -0.3, 0]}>
+          <Text3D
+            font="/fonts/Inter_Bold.json"
+            size={0.6}
+            height={0.3}
+            curveSegments={12}
+            bevelEnabled
+            bevelThickness={0.02}
+            bevelSize={0.02}
+            bevelOffset={0}
+            bevelSegments={5}
+          >
+            {'  '} DOGS
+            <meshStandardMaterial 
+              metalness={1}
+              roughness={0}
+              color="#000000"
+              envMapIntensity={1}
+            />
+          </Text3D>
+        </group>
+      </Center>
+      <directionalLight position={[5, 5, 5]} intensity={2} />
+      <ambientLight intensity={0.7} />
     </>
   )
 }
@@ -75,7 +116,7 @@ export function Scene3D() {
   return (
     <div className="w-full h-full relative">
       <Canvas>
-        <PerspectiveCamera makeDefault position={[0, 0, 8]} />
+        <PerspectiveCamera makeDefault position={[0, 0, 6]} />
         <Scene environment={environments[currentEnv]} />
         <OrbitControls 
           enableZoom={false} 

@@ -5,7 +5,7 @@ import { OurServices } from '@/components/OurServices'
 
 export default async function Home() {
   return (
-    <div className="space-y-20">
+    <div className="">
       <HeroSection />
       <TopDesigns />
       <AboutUs />
