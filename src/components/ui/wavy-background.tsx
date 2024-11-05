@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useRef, useState } from "react";
-import { createNoise3D } from "simplex-noise";
+import { createNoise2D } from "simplex-noise";
 
 export const WavyBackground = ({
   children,
@@ -26,7 +26,7 @@ export const WavyBackground = ({
   waveOpacity?: number;
   [key: string]: any;
 }) => {
-  const noise = createNoise3D();
+  const noise = createNoise2D();
   let w: number,
     h: number,
     nt: number,
@@ -70,7 +70,7 @@ export const WavyBackground = ({
       ctx.lineWidth = waveWidth || 50;
       ctx.strokeStyle = colors[i % colors.length];
       for (x = 0; x < w; x += 10) {
-        var y = noise(x / 800, 0.3 * i, nt) * 100;
+        var y = noise(x / 800, 0.3 * i + nt) * 100;
         ctx.lineTo(x, y + h * 0.5);
       }
       ctx.stroke();
@@ -93,7 +93,7 @@ export const WavyBackground = ({
         cancelAnimationFrame(animationIdRef.current);
       }
     };
-  }, []);
+  }, [init]);
 
   const [isSafari, setIsSafari] = useState(false);
   useEffect(() => {

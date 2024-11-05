@@ -54,8 +54,8 @@ export function TopDesigns() {
         if (data) {
           setProducts(data)
         }
-      } catch (error) {
-        console.error('Error fetching products:', error)
+      } catch (err) {
+        console.error('Error fetching products:', err)
         toast.error('Failed to load products')
       } finally {
         setIsLoading(false)

@@ -56,7 +56,8 @@ export function ContactForm() {
 
       toast.success("Message sent successfully!")
       form.reset()
-    } catch (error) {
+    } catch (err) {
+      console.error('Contact form error:', err)
       toast.error("Failed to send message. Please try again.")
     }
   }

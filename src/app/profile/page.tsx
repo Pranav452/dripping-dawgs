@@ -2,7 +2,7 @@
 import { useAuth } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { User, Calendar, Package, CreditCard, MapPin, Bell, Settings, ShoppingBag, Edit, LogOut } from 'lucide-react'
+import { User, Calendar, CreditCard, MapPin, Bell, Settings, ShoppingBag, Edit, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
