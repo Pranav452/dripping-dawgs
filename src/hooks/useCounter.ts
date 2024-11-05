@@ -1,6 +1,8 @@
+'use client'
+
 import { useState, useEffect } from 'react';
 
-export const useCounter = (end: number, duration: number = 2000) => {
+export function useCounter(end: number, duration: number = 2000) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -10,7 +12,7 @@ export const useCounter = (end: number, duration: number = 2000) => {
     const animate = (currentTime: number) => {
       if (!startTime) startTime = currentTime;
       const progress = Math.min((currentTime - startTime) / duration, 1);
-
+      
       setCount(Math.floor(progress * end));
 
       if (progress < 1) {
@@ -19,9 +21,8 @@ export const useCounter = (end: number, duration: number = 2000) => {
     };
 
     animationFrame = requestAnimationFrame(animate);
-
     return () => cancelAnimationFrame(animationFrame);
   }, [end, duration]);
 
   return count;
-}; 
+} 

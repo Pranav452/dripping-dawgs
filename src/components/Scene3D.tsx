@@ -121,24 +121,36 @@ export function Scene3D() {
 
   return (
     <div className="w-full h-full relative">
-      <Canvas>
-        <PerspectiveCamera makeDefault position={[0, 0, 6]} />
-        <Scene environment={environments[currentEnv]} />
-        <OrbitControls 
-          enableZoom={false} 
-          enablePan={false}
-          enabled={!isMobile}
-        />
-      </Canvas>
+      <div className={`w-full h-full ${isMobile ? 'pointer-events-none' : ''}`}>
+        <Canvas>
+          <PerspectiveCamera makeDefault position={[0, 0, 6]} />
+          <Scene environment={environments[currentEnv]} />
+          <OrbitControls 
+            enableZoom={false} 
+            enablePan={false}
+            enabled={!isMobile}
+          />
+        </Canvas>
+      </div>
       
       <div className="absolute left-4 top-1/2 -translate-y-1/2">
-        <Button onClick={prevEnv} variant="outline" size="icon">
+        <Button 
+          onClick={prevEnv} 
+          variant="outline" 
+          size="icon"
+          className="pointer-events-auto"
+        >
           <ChevronLeft className="h-4 w-4" />
         </Button>
       </div>
       
       <div className="absolute right-4 top-1/2 -translate-y-1/2">
-        <Button onClick={nextEnv} variant="outline" size="icon">
+        <Button 
+          onClick={nextEnv} 
+          variant="outline" 
+          size="icon"
+          className="pointer-events-auto"
+        >
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
