@@ -1,4 +1,4 @@
-# 🐕 Dripping Dog
+# 🐕 DrippingDog
 
 A modern e-commerce platform for premium streetwear and fashion, built with Next.js 14.
 
@@ -166,4 +166,4 @@ For support, email support@drippingdog.com or visit our [Contact Page](https://d
 
 ---
 
-Built with ❤️ by the Dripping Dog Team
+Built with ❤️ by the DrippingDog Team

@@ -57,7 +57,7 @@ export function LoadingScreen() {
               >
                 <Image
                   src="/LOGO.png"
-                  alt="Dripping Dog Logo"
+                  alt="DrippingDog Logo"
                   width={128}
                   height={128}
                   priority

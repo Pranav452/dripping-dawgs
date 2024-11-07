@@ -28,7 +28,7 @@ const dancingScript = Dancing_Script({
 });
 
 export const metadata: Metadata = {
-  title: "Dripping Dog",
+  title: "DrippingDog",
   description: "Clothing Brand",
 };
 

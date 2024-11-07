@@ -31,7 +31,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black">
           <Image
             src="/LOGO.png"
-            alt="Dripping Dog Background"
+            alt="DrippingDog Background"
             fill
             className="object-contain opacity-20"
             priority
@@ -40,19 +40,19 @@ export default function LoginPage() {
         <div className="relative z-20 flex items-center text-lg font-medium">
           <Image 
             src="/LOGO.png" 
-            alt="Dripping Dog Logo" 
+            alt="DrippingDog Logo" 
             width={50} 
             height={50} 
             className="mr-2"
           />
-          Dripping Dog
+          DrippingDog
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
               &ldquo;Express your style with our unique, high-quality clothing that combines comfort with cutting-edge design.&rdquo;
             </p>
-            <footer className="text-sm">Dripping Dog Team</footer>
+            <footer className="text-sm">DrippingDog Team</footer>
           </blockquote>
         </div>
       </div>
