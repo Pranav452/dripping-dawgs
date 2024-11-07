@@ -37,7 +37,7 @@ export function Header() {
                 className="text-3xl font-normal tracking-wide hover:text-yellow-400 transition-colors font-dancing-script"
                 style={{ fontFamily: 'Dancing Script, cursive' }}
               >
-                Dripping dogs
+                Dripping Dog
               </Link>
             </div>
 

@@ -23,7 +23,7 @@ const products: ProductData[] = [
     name: "Classic Black Hoodie",
     description: "Premium quality cotton blend hoodie with minimalist design",
     price: 49.99,
-    brand: "Dripping Dogs",
+    brand: "Dripping Dog",
     category: "Hoodies",
     sizes: ["S", "M", "L", "XL"],
     colors: ["Black", "Gray"],

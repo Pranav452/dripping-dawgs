@@ -29,7 +29,7 @@ export default function SignUpPage() {
         <div className="absolute inset-0 bg-black">
           <Image
             src="/LOGO.png"
-            alt="Dripping Dogs Background"
+            alt="Dripping Dog  Background"
             fill
             className="object-contain opacity-20"
             priority
@@ -38,19 +38,19 @@ export default function SignUpPage() {
         <div className="relative z-20 flex items-center text-lg font-medium">
           <Image 
             src="/LOGO.png" 
-            alt="Dripping Dogs Logo" 
+            alt="Dripping Dog Logo" 
             width={50} 
             height={50} 
-            className="mr-2"
+            className="mr-2"  
           />
-          Dripping Dogs
+          Dripping Dog
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
               &ldquo;Join our community of fashion enthusiasts and discover unique designs that define your style.&rdquo;
             </p>
-            <footer className="text-sm">Dripping Dogs Team</footer>
+            <footer className="text-sm">Dripping Dog Team</footer>
           </blockquote>
         </div>
       </div>

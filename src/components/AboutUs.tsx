@@ -11,9 +11,9 @@ export function AboutUs() {
     <section className="bg-black text-white">
       <div className="mx-auto max-w-7xl px-4 py-16 md:py-24">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">About Dripping Dogs</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">About Dripping Dog</h2>
           <p className="text-gray-300 mb-4 md:mb-6 text-sm md:text-base">
-            At Dripping Dogs, we're passionate about creating unique, high-quality clothing that 
+            At Dripping Dog, we're passionate about creating unique, high-quality clothing that 
             helps you express your individual style. Our journey began with a simple idea: to 
             combine comfort with cutting-edge design.
           </p>

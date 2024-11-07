@@ -91,7 +91,7 @@ function Scene({ environment }: { environment: string }) {
             bevelOffset={0}
             bevelSegments={5}
           >
-            {'  '} DOGS
+            {'   '} DOG
             <meshStandardMaterial 
               metalness={1}
               roughness={0}

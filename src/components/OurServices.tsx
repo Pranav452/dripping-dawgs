@@ -6,7 +6,7 @@ export function OurServices() {
   const services = [
     {
       title: "DELIVERY ON TIME",
-      description: "Swift and reliable delivery service ensuring your Dripping Dogs gear reaches you exactly when promised",
+      description: "Swift and reliable delivery service ensuring your Dripping Dog gear reaches you exactly when promised",
       image: "/DOT.png"
     },
     {

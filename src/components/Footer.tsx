@@ -13,10 +13,10 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-4">
             <Link href="/" className="inline-block">
-              <Image src="/LOGO.png" alt="Dripping Dogs Logo" width={200} height={60} className="dark:invert" />
+              <Image src="/LOGO.png" alt="Dripping Dog Logo" width={200} height={60} className="dark:invert" />
             </Link>
             <p className="text-sm text-gray-400">
-              Elevate your style with premium streetwear that speaks volumes. Dripping Dogs: Where fashion meets attitude.
+              Elevate your style with premium streetwear that speaks volumes. Dripping Dog: Where fashion meets attitude.
             </p>
             <div className="flex space-x-4">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
@@ -84,7 +84,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-sm text-gray-500 text-center sm:text-left mb-4 sm:mb-0">
-            &copy; {currentYear} Dripping Dogs. All rights reserved.
+            &copy; {currentYear} Dripping Dog. All rights reserved.
           </p>
           <div>
             <ul className="flex flex-wrap justify-center sm:justify-end space-x-4 text-sm text-gray-500">
