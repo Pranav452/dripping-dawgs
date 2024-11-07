@@ -109,3 +109,38 @@ body {
 .loading-screen-bg {
   background: linear-gradient(to right, #000000, #1a1a1a);
 }
+
+@font-face {
+  font-family: 'Akira';
+  src: url('/fonts/akira.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akira Expanded';
+  src: url('/fonts/Akira-Expanded.woff2') format('woff2'),
+       url('/fonts/Akira-Expanded.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akira Expanded Bold';
+  src: url('/fonts/Akira-Expanded-Bold.woff2') format('woff2'),
+       url('/fonts/Akira-Expanded-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akira Expanded Outline';
+  src: url('/fonts/Akira-Expanded-Outline.woff2') format('woff2'),
+       url('/fonts/Akira-Expanded-Outline.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

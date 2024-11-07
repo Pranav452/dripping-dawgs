@@ -15,6 +15,20 @@ import {
   SidebarContext
 } from "@/components/ui/sidebar"
 
+// Add the logoStyles to match the header
+const logoStyles = {
+  fontFamily: 'Akira',
+  letterSpacing: '0.2em',
+  textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
+}
+
+// Add styles for navigation items
+const navStyles = {
+  fontFamily: 'Akira',
+  letterSpacing: '0.1em',
+  fontSize: '0.9rem'
+}
+
 const sidebarItems = [
   { icon: Home, label: "Home", href: "/" },
   { icon: ShoppingBag, label: "Products", href: "/products" },
@@ -38,12 +52,12 @@ export function AppSidebar() {
         <div className="flex items-center justify-between">
           <Link 
             href="/" 
-            className="text-3xl font-normal tracking-wide hover:text-yellow-400 transition-colors font-dancing-script"
-            style={{ fontFamily: 'Dancing Script, cursive' }}
+            className="text-1xl tracking-wider hover:text-yellow-400 transition-colors uppercase"
+            style={logoStyles}
           >
             DrippingDog
           </Link>
-            <button 
+          <button 
             onClick={() => setIsOpen(false)}
             className="p-2 hover:bg-yellow-400 hover:text-black rounded-md transition-colors"
           >
@@ -53,7 +67,11 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <div style={navStyles}>
+              NAVIGATION
+            </div>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarItems.map((item) => (
@@ -61,11 +79,13 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Link 
                       href={item.href}
-                      className="flex items-center"
+                      className="flex items-center hover:text-black transition-colors"
                       onClick={() => setIsOpen(false)}
                     >
                       <item.icon className="mr-3 h-5 w-5" />
-                      <span>{item.label}</span>
+                      <span style={navStyles}>
+                        {item.label}
+                      </span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

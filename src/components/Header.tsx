@@ -7,6 +7,13 @@ import { useAuth } from '@/lib/auth'
 import { AppSidebar } from '@/components/Sidebar'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
+// Update the logoStyles constant
+const logoStyles = {
+  fontFamily: 'Akira',
+  letterSpacing: '0.2em',
+  textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
+}
+
 export function Header() {
   const items = useCartStore((state) => state.items)
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0)
@@ -34,10 +41,10 @@ export function Header() {
             <div className="hidden lg:block absolute left-1/2 transform -translate-x-1/2">
               <Link 
                 href="/" 
-                className="text-3xl font-normal tracking-wide hover:text-yellow-400 transition-colors font-dancing-script"
-                style={{ fontFamily: 'Dancing Script, cursive' }}
+                className="text-3xl tracking-wider hover:text-yellow-400 transition-colors uppercase"
+                style={logoStyles}
               >
-                DrippingDog
+                DrippingDog  
               </Link>
             </div>
 

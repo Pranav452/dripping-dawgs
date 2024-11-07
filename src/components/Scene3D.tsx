@@ -51,52 +51,49 @@ function Scene({ environment }: { environment: string }) {
   return (
     <>
       <Environment 
-        preset={environment as 
-          "apartment" | "city" | "dawn" | "forest" | "lobby" | 
-          "night" | "park" | "studio" | "sunset" | "warehouse"
-        } 
+        preset={environment as any} 
         background 
       />
       <Center ref={textRef}>
         <group position={[0, 0.8, 0]}>
           <Text3D
-            font="/fonts/Inter_Bold.json"
-            size={0.6}
-            height={0.3}
+            font="/fonts/akira.json"
+            size={0.8}
+            height={0.2}
             curveSegments={12}
             bevelEnabled
-            bevelThickness={0.02}
-            bevelSize={0.02}
+            bevelThickness={0.01}
+            bevelSize={0.01}
             bevelOffset={0}
             bevelSegments={5}
           >
             DRIPPING
             <meshStandardMaterial 
-              metalness={1}
-              roughness={0}
-              color="#000000"
-              envMapIntensity={1}
+              metalness={0.8}
+              roughness={0.2}
+              color="#FFFFFF"
+              envMapIntensity={2}
             />
           </Text3D>
         </group>
         <group position={[0, -0.3, 0]}>
           <Text3D
-            font="/fonts/Inter_Bold.json"
-            size={0.6}
-            height={0.3}
+            font="/fonts/akira.json"
+            size={0.8}
+            height={0.2}
             curveSegments={12}
             bevelEnabled
-            bevelThickness={0.02}
-            bevelSize={0.02}
+            bevelThickness={0.01}
+            bevelSize={0.01}
             bevelOffset={0}
             bevelSegments={5}
           >
-            {'   '} DOG
+            DOG
             <meshStandardMaterial 
-              metalness={1}
-              roughness={0}
-              color="#000000"
-              envMapIntensity={1}
+              metalness={0.8}
+              roughness={0.2}
+              color="#FFFFFF"
+              envMapIntensity={2}
             />
           </Text3D>
         </group>
