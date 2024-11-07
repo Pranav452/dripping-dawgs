@@ -16,7 +16,7 @@ export function Footer() {
               <Image src="/LOGO.png" alt="DrippingDog Logo" width={200} height={60} className="dark:invert" />
             </Link>
             <p className="text-sm text-gray-400">
-              Elevate your style with premium streetwear that speaks volumes. DrippingDog: Where fashion meets attitude.
+              Elevate your style with premium streetwear that speaks volumes. DrippingDog - where fashion meets attitude.
             </p>
             <div className="flex space-x-4">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
