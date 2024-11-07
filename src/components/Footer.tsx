@@ -38,10 +38,10 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:gap-4">
-            <div>
+          <div className="grid grid-cols-2 gap-8 sm:gap-4 place-content-center">
+            <div className="flex flex-col items-center -ml-8">
               <h4 className="font-bold text-lg mb-4">Shop</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-400 text-center">
                 <li><Link href="/new-arrivals" className="hover:text-primary transition-colors">New Arrivals</Link></li>
                 <li><Link href="/best-sellers" className="hover:text-primary transition-colors">Best Sellers</Link></li>
                 <li><Link href="/sale" className="hover:text-primary transition-colors">Sale</Link></li>
@@ -49,9 +49,9 @@ export function Footer() {
                 <li><Link href="/accessories" className="hover:text-primary transition-colors">Accessories</Link></li>
               </ul>
             </div>
-            <div>
+            <div className="flex flex-col items-center -ml-8">
               <h4 className="font-bold text-lg mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-gray-400">
+              <ul className="space-y-2 text-sm text-gray-400 text-center">
                 <li><Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
                 <li><Link href="/shipping" className="hover:text-primary transition-colors">Shipping</Link></li>
                 <li><Link href="/returns" className="hover:text-primary transition-colors">Returns</Link></li>
@@ -78,6 +78,17 @@ export function Footer() {
                   <Mail className="mr-2 h-4 w-4" /> Subscribe
                 </Button>
               </form>
+            </div>
+
+            <div className="mt-6">
+              <h5 className="font-semibold mb-3">Our Shipping Partners</h5>
+              <div className="flex flex-wrap gap-4 items-center">
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Delhivery</span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Indian Post</span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">DTDC</span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Blue Dart</span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Express Bees</span>
+              </div>
             </div>
           </div>
         </div>
