@@ -3,12 +3,15 @@ import { useCartStore } from '@/store/cart'
 import { useAuth } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export default function CheckoutPage() {
   const { items } = useCartStore()
   const { user } = useAuth()
   const router = useRouter()
   const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
+  const shipping = total > 100 ? 0 : 10
+  const finalTotal = total + shipping
 
   const [formData, setFormData] = useState({
     name: '',
@@ -44,6 +47,13 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      // Added field validation
+      if (!formData.name || !formData.email || !formData.address || 
+          !formData.city || !formData.postalCode || !formData.phone) {
+        toast.error('Please fill in all required fields')
+        return
+      }
+
       if (!user) {
         router.push('/login')
         return
@@ -65,6 +75,7 @@ export default function CheckoutPage() {
       router.push('/payment')
     } catch (error) {
       console.error('Error processing checkout:', error)
+      toast.error('Error processing checkout')
     }
   }
 
@@ -189,10 +200,18 @@ export default function CheckoutPage() {
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
-            <div className="border-t pt-4">
+            <div className="border-t pt-4 space-y-2">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>${total.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping</span>
+                <span>${shipping.toFixed(2)}</span>
+              </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>${finalTotal.toFixed(2)}</span>
               </div>
             </div>
           </div>

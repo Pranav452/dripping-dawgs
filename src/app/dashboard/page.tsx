@@ -4,6 +4,7 @@ import { useAuth } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { format } from 'date-fns'
+import { toast } from 'sonner'
 
 interface Order {
   id: string
@@ -67,29 +68,51 @@ export default function DashboardPage() {
   }, [user, router])
 
   const updateOrderStatus = async (orderId: string, status: string) => {
-    const { error } = await supabase
-      .from('orders')
-      .update({ status })
-      .eq('id', orderId)
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status })
+        .eq('id', orderId)
 
-    if (!error) {
+      if (error) throw error
+
       setOrders(orders.map(order => 
         order.id === orderId ? { ...order, status } : order
       ))
+      
+      toast.success('Order status updated successfully')
+    } catch (error) {
+      console.error('Error updating order:', error)
+      toast.error('Failed to update order status')
     }
   }
 
   const updateShippingDetails = async (orderId: string, tracking: string, delivery: string) => {
-    const { error } = await supabase
-      .from('orders')
-      .update({
-        tracking_number: tracking,
-        estimated_delivery: delivery,
-        status: 'shipped'
-      })
-      .eq('id', orderId)
+    try {
+      // Validate date format
+      const deliveryDate = new Date(delivery)
+      if (isNaN(deliveryDate.getTime())) {
+        toast.error('Please enter a valid delivery date')
+        return
+      }
 
-    if (!error) {
+      // Validate tracking number format (you can adjust the regex as needed)
+      if (!/^[A-Z0-9]{8,}$/i.test(tracking)) {
+        toast.error('Please enter a valid tracking number')
+        return
+      }
+
+      const { error } = await supabase
+        .from('orders')
+        .update({
+          tracking_number: tracking,
+          estimated_delivery: delivery,
+          status: 'shipped'
+        })
+        .eq('id', orderId)
+
+      if (error) throw error
+
       setOrders(orders.map(order => 
         order.id === orderId ? {
           ...order,
@@ -98,6 +121,11 @@ export default function DashboardPage() {
           status: 'shipped'
         } : order
       ))
+      
+      toast.success('Shipping details updated successfully')
+    } catch (error) {
+      console.error('Error updating shipping details:', error)
+      toast.error('Failed to update shipping details')
     }
   }
 

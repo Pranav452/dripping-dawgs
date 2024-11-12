@@ -7,6 +7,8 @@ import { CheckCircle, Package, Truck, ShoppingBag } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { toast } from 'sonner'
+import { useCartStore } from '@/store/cart'
 
 interface OrderItem {
   id: string
@@ -34,11 +36,30 @@ export default function ThankYouPage() {
   useEffect(() => {
     const orderData = sessionStorage.getItem('lastOrder')
     if (!orderData) {
+      toast.error('No order found')
       router.push('/')
       return
     }
-    setOrder(JSON.parse(orderData))
-    setLoading(false)
+
+    try {
+      const parsedOrder = JSON.parse(orderData)
+      // Added order data validation
+      if (!parsedOrder.id || !parsedOrder.order_number || !parsedOrder.items) {
+        throw new Error('Invalid order data')
+      }
+      setOrder(parsedOrder)
+      setLoading(false)
+      
+      // Clear cart and session storage
+      useCartStore.getState().clearCart()
+      setTimeout(() => {
+        sessionStorage.removeItem('lastOrder')
+      }, 1000)
+    } catch (error) {
+      console.error('Error parsing order:', error)
+      toast.error('Error loading order details')
+      router.push('/')
+    }
   }, [router])
 
   if (loading) {
