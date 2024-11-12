@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Instagram, Youtube, Twitter, Facebook, Mail, ArrowRight } from 'lucide-react'
+import { Instagram, Youtube, Twitter, Facebook, Mail, ArrowRight, Truck, Package, Box, Send, Plane } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -52,7 +52,7 @@ export function Footer() {
             <div className="flex flex-col items-center -ml-8">
               <h4 className="font-bold text-lg mb-4">Support</h4>
               <ul className="space-y-2 text-sm text-gray-400 text-center">
-                <li><Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
+                
                 <li><Link href="/shipping" className="hover:text-primary transition-colors">Shipping</Link></li>
                 <li><Link href="/returns" className="hover:text-primary transition-colors">Returns</Link></li>
                 <li><Link href="/size-guide" className="hover:text-primary transition-colors">Size Guide</Link></li>
@@ -83,11 +83,26 @@ export function Footer() {
             <div className="mt-6">
               <h5 className="font-semibold mb-3">Our Shipping Partners</h5>
               <div className="flex flex-wrap gap-4 items-center">
-                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Delhivery</span>
-                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Indian Post</span>
-                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">DTDC</span>
-                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Blue Dart</span>
-                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">Express Bees</span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full flex items-center">
+                  <Truck className="w-4 h-4 mr-2" />
+                  Delhivery
+                </span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full flex items-center">
+                  <Package className="w-4 h-4 mr-2" />
+                  Indian Post
+                </span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full flex items-center">
+                  <Box className="w-4 h-4 mr-2" />
+                  DTDC
+                </span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full flex items-center">
+                  <Send className="w-4 h-4 mr-2" />
+                  Blue Dart
+                </span>
+                <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full flex items-center">
+                  <Plane className="w-4 h-4 mr-2" />
+                  Express Bees
+                </span>
               </div>
             </div>
           </div>
