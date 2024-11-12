@@ -41,10 +41,26 @@ function useIsMobile() {
 
 function Scene({ environment }: { environment: string }) {
   const textRef = useRef<THREE.Group>(null)
+  const [forward, setForward] = useState(true)
+  const progress = useRef(0)
 
   useFrame((state, delta) => {
     if (textRef.current) {
-      textRef.current.rotation.y += delta * 0.2
+      if (forward) {
+        progress.current += delta * 0.2
+        if (progress.current >= 1) {
+          progress.current = 1
+          setForward(false)
+        }
+      } else {
+        progress.current -= delta * 0.2
+        if (progress.current <= 0) {
+          progress.current = 0
+          setForward(true)
+        }
+      }
+
+      textRef.current.rotation.y = Math.PI * 0.5 * progress.current
     }
   })
 
@@ -88,7 +104,7 @@ function Scene({ environment }: { environment: string }) {
             bevelOffset={0}
             bevelSegments={5}
           >
-            DOG
+            {'    '}DOG
             <meshStandardMaterial 
               metalness={0.8}
               roughness={0.2}

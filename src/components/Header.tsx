@@ -44,7 +44,7 @@ export function Header() {
                 className="text-3xl tracking-wider hover:text-yellow-400 transition-colors uppercase"
                 style={logoStyles}
               >
-                DrippingDog  
+                Dripping Dog  
               </Link>
             </div>
 

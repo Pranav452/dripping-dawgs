@@ -164,14 +164,22 @@ export function TopDesigns() {
                 </CardContent>
               </Link>
               <CardFooter className="p-4 flex justify-between items-center">
-                <Button 
-                  className="flex-1 mr-2"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={isInCart(product.id)}
-                >
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  {isInCart(product.id) ? 'In Cart' : 'Add to Cart'}
-                </Button>
+                {isInCart(product.id) ? (
+                  <Link href="/cart" className="flex-1 mr-2">
+                    <Button className="w-full">
+                      <ShoppingCart className="mr-2 h-4 w-4" />
+                      View Cart
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button 
+                    className="flex-1 mr-2"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    <ShoppingCart className="mr-2 h-4 w-4" />
+                    Add to Cart
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   size="icon"

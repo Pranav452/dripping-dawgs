@@ -20,7 +20,6 @@ export default function CheckoutPage() {
     city: '',
     postalCode: '',
     phone: '',
-    paymentMethod: 'card'
   })
 
   useEffect(() => {
@@ -156,42 +155,6 @@ export default function CheckoutPage() {
         </div>
 
         <div className="rounded-lg border p-6">
-          <h2 className="mb-4 text-xl font-semibold">Payment Method</h2>
-          <div className="space-y-4">
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="card"
-                checked={formData.paymentMethod === 'card'}
-                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-              />
-              Credit/Debit Card
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="upi"
-                checked={formData.paymentMethod === 'upi'}
-                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-              />
-              UPI
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cod"
-                checked={formData.paymentMethod === 'cod'}
-                onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-              />
-              Cash on Delivery
-            </label>
-          </div>
-        </div>
-
-        <div className="rounded-lg border p-6">
           <h2 className="mb-4 text-xl font-semibold">Order Summary</h2>
           <div className="space-y-4">
             {items.map((item) => (
@@ -221,7 +184,7 @@ export default function CheckoutPage() {
           type="submit"
           className="w-full rounded bg-black px-4 py-2 text-white hover:bg-gray-800"
         >
-          Place Order
+          Proceed to Payment
         </button>
       </form>
     </div>
