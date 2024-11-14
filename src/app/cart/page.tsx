@@ -12,7 +12,7 @@ import { motion } from "framer-motion"
 export default function CartPage() {
   const { items, removeItem, updateQuantity } = useCartStore()
   const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
-  const shipping = total > 100 ? 0 : 0
+  const shipping: number = total > 100 ? 0 : 10
   const subtotal = total
   const finalTotal = total + shipping
 
