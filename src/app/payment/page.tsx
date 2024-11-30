@@ -131,7 +131,7 @@ export default function PaymentPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         name: 'DrippingDawgs',
         currency: 'INR',
-        amount: total * 100,
+        amount: Math.round(total * 83 * 100),
         order_id: orderId,
         description: 'Thank you for your purchase',
         image: '/logo.png',

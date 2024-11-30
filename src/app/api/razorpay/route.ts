@@ -11,9 +11,13 @@ export async function POST(req: Request) {
       key_secret: process.env.RAZORPAY_KEY_SECRET!,
     })
 
+    // Convert amount to INR and ensure it's a valid integer in paise
+    const amountInINR = amount * 83 // Convert to INR
+    const amountInPaise = Math.round(amountInINR * 100) // Convert to paise and round to nearest integer
+
     // Create order
     const order = await razorpay.orders.create({
-      amount: Math.round(amount * 100), // Convert to paise and ensure it's a whole number
+      amount: amountInPaise,
       currency: 'INR',
       payment_capture: true
     })
