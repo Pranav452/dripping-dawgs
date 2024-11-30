@@ -7,16 +7,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, CheckCircle2, Heart } from 'lucide-react'
 
-interface OrderItem {
+interface OrderItemData {
+  quantity: number
+  price_at_time: number
+  size: string
+  color: string
   products: {
     id: string
     name: string
     image_url: string
   }
-  quantity: number
-  price_at_time: number
-  size: string
-  color: string
 }
 
 interface OrderDetails {
@@ -75,7 +75,6 @@ export default function ThankYouPage() {
       }
 
       try {
-        // Fetch order details
         const { data: orderData, error: orderError } = await supabase
           .from('orders')
           .select('*, order_number')
@@ -84,7 +83,6 @@ export default function ThankYouPage() {
 
         if (orderError) throw orderError
 
-        // Fetch order items with product details
         const { data: itemsData, error: itemsError } = await supabase
           .from('order_items')
           .select(`
@@ -102,20 +100,9 @@ export default function ThankYouPage() {
 
         if (itemsError) throw itemsError
 
-        // Format order details
         const orderDetails: OrderDetails = {
           ...orderData,
-          items: itemsData.map((item: {
-            quantity: number
-            price_at_time: number
-            size: string
-            color: string
-            products: {
-              id: string
-              name: string
-              image_url: string
-            }
-          }) => ({
+          items: (itemsData as OrderItemData[]).map((item) => ({
             id: item.products.id,
             name: item.products.name,
             quantity: item.quantity,
