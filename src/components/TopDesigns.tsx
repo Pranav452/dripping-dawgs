@@ -75,48 +75,50 @@ export function TopDesigns() {
   }
 
   return (
-    <section className="bg-gray-100 pb-12 px-4 sm:px-6 lg:px-8"><br /><br />
+    <section className="bg-black pb-12 px-4 sm:px-6 lg:px-8"><br /><br />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">TOP DESIGNS</h2>
-          <p className="text-gray-600">Discover our most popular t-shirt designs</p>
+          <h2 className="text-4xl font-bold mb-4 text-white">TOP DESIGNS</h2>
+          <p className="text-gray-400">Discover our most popular t-shirt designs</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuredProducts.map((product) => (
-            <Card key={product.id} className="overflow-hidden group">
+            <Card key={product.id} className="overflow-hidden group bg-black border border-gray-800 hover:border-yellow-500/50 transition-all duration-300">
               <Link href={`/products/${product.id}`}>
-                <div className="relative aspect-square overflow-hidden bg-white">
+                <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900 p-6 group-hover:from-gray-800 group-hover:to-gray-900 transition-all duration-500">
                   <Image
                     src={getImageUrl(product, selectedColors[product.id])}
                     alt={product.name}
                     fill
-                    className="object-contain transform group-hover:scale-105 transition-all duration-300"
+                    className="object-contain transform group-hover:scale-105 transition-all duration-500"
                     priority
                   />
                 </div>
               </Link>
-              <CardContent className="p-4">
-                <Link href={`/products/${product.id}`}>
-                  <CardTitle className="text-lg font-semibold mb-2">{product.name}</CardTitle>
-                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-                  <p className="text-lg font-bold">{formatPrice(product.price)}</p>
+              <CardContent className="p-5">
+                <Link href={`/products/${product.id}`} className="text-white hover:text-yellow-500 transition-colors">
+                  <CardTitle className="text-lg font-semibold mb-2 text-white group-hover:text-yellow-500 transition-colors">{product.name}</CardTitle>
+                  <p className="text-sm text-gray-400 mb-2 line-clamp-2 group-hover:text-gray-300 transition-colors">{product.description}</p>
+                  <p className="text-lg font-bold text-yellow-500">{formatPrice(product.price)}</p>
                 </Link>
 
                 {/* Color Selection */}
-                <div className="mt-3">
-                  <label className="text-sm text-gray-600 mb-1 block">Color:</label>
-                  <div className="flex gap-2">
+                <div className="mt-4">
+                  <label className="text-sm text-gray-400 mb-2 block">Color</label>
+                  <div className="flex gap-3">
                     {product.colors.map((color) => (
                       <button
                         key={color}
                         onClick={() => setSelectedColors(prev => ({ ...prev, [product.id]: color }))}
-                        className={`h-6 w-6 rounded-full border ${
-                          selectedColors[product.id] === color ? 'ring-2 ring-black ring-offset-2' : ''
+                        className={`h-7 w-7 rounded-full transform hover:scale-110 transition-all duration-300 ${
+                          selectedColors[product.id] === color 
+                            ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-black' 
+                            : 'hover:ring-2 hover:ring-yellow-500/50 hover:ring-offset-2 hover:ring-offset-black'
                         }`}
                         style={{
                           backgroundColor: color.toLowerCase(),
-                          border: color.toLowerCase() === 'white' ? '1px solid #e5e7eb' : 'none'
+                          border: color.toLowerCase() === 'white' ? '1px solid #4a4a4a' : 'none'
                         }}
                         title={color}
                       />
@@ -125,17 +127,17 @@ export function TopDesigns() {
                 </div>
 
                 {/* Size Selection */}
-                <div className="mt-3">
-                  <label className="text-sm text-gray-600 mb-1 block">Size:</label>
+                <div className="mt-4">
+                  <label className="text-sm text-gray-400 mb-2 block">Size</label>
                   <div className="flex gap-2 flex-wrap">
                     {product.size_available.map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSizes(prev => ({ ...prev, [product.id]: size }))}
-                        className={`px-2 py-1 text-sm border rounded ${
+                        className={`px-3 py-1.5 text-sm border rounded-md transform hover:scale-105 transition-all duration-300 ${
                           selectedSizes[product.id] === size 
-                            ? 'border-black bg-black text-white' 
-                            : 'border-gray-200 hover:border-black'
+                            ? 'border-yellow-500 bg-yellow-500 text-black font-medium' 
+                            : 'border-gray-800 text-gray-400 hover:border-yellow-500/50 hover:text-yellow-500'
                         }`}
                       >
                         {size}
@@ -144,17 +146,17 @@ export function TopDesigns() {
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="p-4 pt-0 flex gap-2">
+              <CardFooter className="px-5 pb-5 pt-0 flex gap-3">
                 <Button
-                  className={`flex-1 ${
+                  className={`flex-1 text-base font-medium ${
                     isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])
-                      ? 'bg-secondary text-secondary-foreground cursor-not-allowed'
-                      : 'bg-black hover:bg-gray-800 text-white'
+                      ? 'bg-gray-800 text-gray-400 cursor-not-allowed'
+                      : 'bg-yellow-500 hover:bg-yellow-400 text-black transform hover:scale-[1.02] transition-all duration-300'
                   }`}
                   onClick={() => handleAddToCart(product)}
                   disabled={isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])}
                 >
-                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  <ShoppingCart className="w-5 h-5 mr-2" />
                   {isInCart(product.id, selectedSizes[product.id], selectedColors[product.id]) 
                     ? 'In Cart' 
                     : 'Add to Cart'
@@ -164,9 +166,16 @@ export function TopDesigns() {
                   variant="outline"
                   size="icon"
                   onClick={() => handleWishlistToggle(product.id)}
-                  className="hover:bg-gray-100"
+                  className={`border-2 w-11 h-11 transform hover:scale-110 transition-all duration-300 ${
+                    hasItem(product.id)
+                      ? 'border-red-500 bg-red-500/10 hover:bg-red-500/20'
+                      : 'border-gray-800 hover:border-red-500/50'
+                  }`}
                 >
-                  <Heart className="w-4 h-4" fill={hasItem(product.id) ? "currentColor" : "none"} />
+                  <Heart 
+                    className={`w-5 h-5 ${hasItem(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                    fill={hasItem(product.id) ? "currentColor" : "none"}
+                  />
                 </Button>
               </CardFooter>
             </Card>
@@ -175,7 +184,7 @@ export function TopDesigns() {
 
         <div className="text-center mt-12">
           <Link href="/products">
-            <Button className="bg-black hover:bg-gray-800 text-white px-8">
+            <Button className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-6 text-lg font-medium transform hover:scale-[1.02] transition-all duration-300">
               View All Designs
             </Button>
           </Link>

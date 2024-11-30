@@ -87,24 +87,26 @@ export function ProductGrid() {
                 T-Shirts
               </span>
               <Link href={`/products/${product.id}`}>
-                <h3 className="mt-1 font-semibold hover:underline">{product.name}</h3>
+                <h3 className="mt-1 font-semibold text-white hover:text-yellow-500 transition-colors">{product.name}</h3>
               </Link>
-              <p className="mt-1 text-muted-foreground">{formatPrice(product.price)}</p>
+              <p className="mt-1 text-yellow-500 font-medium">{formatPrice(product.price)}</p>
               
               {/* Color Selection */}
               <div className="mt-3">
-                <label className="text-sm text-gray-600 mb-1 block">Color:</label>
+                <label className="text-sm text-gray-300 mb-1 block">Color:</label>
                 <div className="flex gap-2">
                   {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColors(prev => ({ ...prev, [product.id]: color }))}
-                      className={`h-6 w-6 rounded-full border ${
-                        selectedColors[product.id] === color ? 'ring-2 ring-black ring-offset-2' : ''
+                      className={`h-8 w-8 rounded-full transform hover:scale-110 transition-all duration-300 ${
+                        selectedColors[product.id] === color 
+                          ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-black' 
+                          : 'hover:ring-2 hover:ring-yellow-500/50 hover:ring-offset-2 hover:ring-offset-black'
                       }`}
                       style={{
                         backgroundColor: color.toLowerCase(),
-                        border: color.toLowerCase() === 'white' ? '1px solid #e5e7eb' : 'none'
+                        border: color.toLowerCase() === 'white' ? '1px solid #4a4a4a' : 'none'
                       }}
                       title={color}
                     />
@@ -114,16 +116,16 @@ export function ProductGrid() {
 
               {/* Size Selection */}
               <div className="mt-3">
-                <label className="text-sm text-gray-600 mb-1 block">Size:</label>
+                <label className="text-sm text-gray-300 mb-1 block">Size:</label>
                 <div className="flex gap-2 flex-wrap">
                   {product.size_available.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSizes(prev => ({ ...prev, [product.id]: size }))}
-                      className={`px-2 py-1 text-sm border rounded ${
+                      className={`px-3 py-1.5 text-sm border rounded-md transform hover:scale-105 transition-all duration-300 ${
                         selectedSizes[product.id] === size 
-                          ? 'border-black bg-black text-white' 
-                          : 'border-gray-200 hover:border-black'
+                          ? 'border-yellow-500 bg-yellow-500 text-black font-medium' 
+                          : 'border-gray-800 text-gray-400 hover:border-yellow-500/50 hover:text-yellow-500'
                       }`}
                     >
                       {size}
@@ -133,10 +135,10 @@ export function ProductGrid() {
               </div>
 
               <Button 
-                className={`mt-4 w-full ${
+                className={`mt-4 w-full py-6 text-base font-medium ${
                   isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])
-                    ? 'bg-secondary text-secondary-foreground cursor-not-allowed' 
-                    : 'bg-black text-white hover:bg-gray-800'
+                    ? 'bg-gray-800 text-gray-400 cursor-not-allowed' 
+                    : 'bg-yellow-500 hover:bg-yellow-400 text-black transform hover:scale-[1.02] transition-all duration-300'
                 }`}
                 onClick={() => {
                   const size = selectedSizes[product.id]
