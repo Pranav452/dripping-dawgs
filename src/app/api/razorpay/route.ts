@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const order = await razorpay.orders.create({
       amount: Math.round(amount * 100), // Convert to paise and ensure it's a whole number
       currency: 'INR',
-      payment_capture: 1
+      payment_capture: true
     })
 
     return NextResponse.json({
