@@ -108,10 +108,10 @@ export default function PaymentPage() {
       }
     }
 
-    if (isScriptLoaded) {
+    if (isScriptLoaded && items.length > 0) {
       createOrder()
     }
-  }, [isScriptLoaded, total])
+  }, [isScriptLoaded, total, items])
 
   const makePayment = async () => {
     try {
@@ -292,7 +292,7 @@ export default function PaymentPage() {
       <div className="mx-auto max-w-3xl px-4 py-12 text-center">
         <div className="rounded-lg border p-8">
           <h1 className="mb-4 text-2xl font-bold">
-            {processing ? 'Initializing Payment...' : 'Payment Window Opened'}
+            {processing ? 'Initializing Payment...' : 'Ready for Payment'}
           </h1>
           <div className="mb-8 text-gray-600">
             {processing ? (
@@ -300,7 +300,16 @@ export default function PaymentPage() {
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
               </div>
             ) : (
-              <p>Please complete your payment in the Razorpay window</p>
+              <>
+                <p className="mb-4">Your order is ready for payment</p>
+                <button
+                  onClick={makePayment}
+                  className="rounded-md bg-black px-6 py-2 text-white hover:bg-gray-800 disabled:bg-gray-400"
+                  disabled={!orderId}
+                >
+                  Pay Now ₹{total}
+                </button>
+              </>
             )}
           </div>
           <div className="mb-4">
