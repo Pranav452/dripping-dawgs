@@ -22,6 +22,8 @@ interface Product {
   categories: {
     name: string
   }
+  size_available: string[]
+  colors: string[]
 }
 
 // Array of catchy messages
@@ -66,7 +68,9 @@ export default function WishlistPage() {
           *,
           categories (
             name
-          )
+          ),
+          size_available,
+          colors
         `)
         .in('id', wishlistItems)
 
@@ -88,12 +92,17 @@ export default function WishlistPage() {
 
   const handleAddToCart = (product: Product) => {
     if (!isInCart(product.id)) {
+      const defaultSize = product.size_available[0] || 'M'
+      const defaultColor = product.colors[0] || 'Black'
+      
       addToCart({
         id: product.id,
         name: product.name,
         price: product.price,
         quantity: 1,
-        image_url: product.image_url
+        image_url: product.image_url,
+        size: defaultSize,
+        color: defaultColor
       })
       toast.success('Added to cart! Ready for checkout!')
     }
