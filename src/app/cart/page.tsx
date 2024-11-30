@@ -1,186 +1,147 @@
 'use client'
 
 import { useCartStore } from '@/store/cart'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Minus, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, Package } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Card } from "@/components/ui/card"
-import { motion } from "framer-motion"
-
-// Helper function to format price in Rupees
-function formatPrice(price: number): string {
-  const priceInRupees = price * 83
-  return `₹${priceInRupees.toLocaleString('en-IN')}`
-}
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/lib/auth'
+import { toast } from 'sonner'
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity } = useCartStore()
-  const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
-  const shipping: number = total > 100 ? 0 : 10
-  const subtotal = total
-  const finalTotal = total + shipping
+  const { items, removeItem, updateQuantity, formatPrice } = useCartStore()
+  const router = useRouter()
+  const { user } = useAuth()
+
+  const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0)
+
+  const handleCheckout = () => {
+    if (!user) {
+      toast.error('Please login to checkout')
+      router.push('/login')
+      return
+    }
+    router.push('/checkout')
+  }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[80vh] flex items-center justify-center bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-md mx-auto text-center px-4">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <ShoppingBag className="w-32 h-32 text-gray-300 mx-auto mb-6" />
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-              Your Cart is Empty
-            </h1>
-            <p className="text-gray-600 mb-8 text-lg">
-              Time to fill it with something extraordinary.
-            </p>
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:px-0">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Your cart is empty</h1>
+          <p className="mt-2 text-lg text-gray-500">Continue shopping to add items to your cart.</p>
+          <div className="mt-6">
             <Link href="/products">
-              <Button className="bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-300 text-lg px-8 py-6 h-auto">
-                Explore Collection <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <Button>Continue Shopping</Button>
             </Link>
-          </motion.div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="py-16 px-4 bg-gradient-to-b from-white to-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-          Your Shopping Cart
-        </h1>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Card className="mb-8 border-0 shadow-lg">
-              <ScrollArea className="h-[calc(100vh-400px)]">
-                <div className="p-6 space-y-6">
-                  {items.map((item) => (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      key={`${item.id}-${item.size}`}
-                      className="flex gap-6 pb-6 border-b last:border-b-0 last:pb-0 group hover:bg-gray-50 p-4 rounded-lg transition-all duration-300"
-                    >
-                      <Link 
-                        href={`/products/${item.id}`}
-                        className="relative h-40 w-40 flex-shrink-0 rounded-xl overflow-hidden group-hover:shadow-md transition-all duration-300"
-                      >
-                        <Image
-                          src={item.image_url}
-                          alt={item.name}
-                          fill
-                          className="object-cover transform group-hover:scale-105 transition-all duration-500"
-                        />
-                      </Link>
-                      <div className="flex flex-1 flex-col justify-between">
-                        <div>
-                          <Link href={`/products/${item.id}`}>
-                            <h3 className="text-xl font-bold hover:text-yellow-600 transition-colors duration-300">
-                              {item.name}
-                            </h3>
-                          </Link>
-                          <p className="text-lg text-gray-600 mt-1">{formatPrice(item.price)}</p>
-                          <div className="flex gap-4 mt-2">
-                            {item.size && (
-                              <span className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
-                                Size: {item.size}
-                              </span>
-                            )}
-                            {item.color && (
-                              <span className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
-                                Color: {item.color}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 mt-4">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1), item.size)}
-                            className="rounded-full hover:bg-black hover:text-white transition-all duration-300"
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="font-semibold text-lg w-8 text-center">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1, item.size)}
-                            className="rounded-full hover:bg-black hover:text-white transition-all duration-300"
-                          >
-                            <Plus className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="flex flex-col items-end justify-between">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeItem(item.id, item.size)}
-                          className="text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </Button>
-                        <p className="font-bold text-2xl">
-                          {formatPrice(item.price * item.quantity)}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </Card>
-          </div>
+    <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:px-0">
+      <h1 className="text-3xl font-bold tracking-tight text-gray-900">Shopping Cart</h1>
 
-          <div className="lg:col-span-1">
-            <Card className="p-6 border-0 shadow-lg sticky top-8">
-              <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span>{formatPrice(subtotal)}</span>
+      <div className="mt-12">
+        <div className="divide-y divide-gray-200 border-t border-b">
+          {items.map((item) => (
+            <div key={`${item.id}-${item.size}-${item.color}`} className="flex py-6">
+              <div className="flex-shrink-0">
+                <Link href={`/products/${item.id}`}>
+                  <div className="relative h-24 w-24 overflow-hidden rounded-md bg-white">
+                    <Image
+                      src={item.image_url}
+                      alt={item.name}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </Link>
+              </div>
+
+              <div className="ml-4 flex flex-1 flex-col">
+                <div>
+                  <div className="flex justify-between">
+                    <div>
+                      <Link href={`/products/${item.id}`}>
+                        <h3 className="font-medium text-gray-700 hover:text-gray-800">
+                          {item.name}
+                        </h3>
+                      </Link>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Size: {item.size} | Color: {item.color}
+                      </p>
+                    </div>
+                    <p className="ml-4 text-sm font-medium text-gray-900">
+                      {formatPrice(item.price)}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
-                </div>
-                {shipping > 0 && (
-                  <p className="text-sm text-gray-500">
-                    Free shipping on orders over ₹8,300
-                  </p>
-                )}
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center text-2xl font-bold">
-                    <span>Total</span>
-                    <span>{formatPrice(finalTotal)}</span>
+
+                <div className="flex flex-1 items-end justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1), item.size, item.color)}
+                      className="rounded-full hover:bg-black hover:text-white transition-all duration-300"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </Button>
+                    <span className="text-gray-600 w-8 text-center">{item.quantity}</span>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => updateQuantity(item.id, item.quantity + 1, item.size, item.color)}
+                      className="rounded-full hover:bg-black hover:text-white transition-all duration-300"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="flex">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeItem(item.id, item.size, item.color)}
+                      className="text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </Button>
                   </div>
                 </div>
               </div>
+            </div>
+          ))}
+        </div>
 
-              <div className="space-y-4">
-                <Link href="/checkout" className="block">
-                  <Button className="w-full bg-black text-white hover:bg-gray-800 h-14 text-lg font-semibold transform hover:scale-105 transition-all duration-300">
-                    Checkout Now <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-                
-                <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
-                  <Package className="h-4 w-4" />
-                  <span>Secure Checkout • Free Returns</span>
-                </div>
-              </div>
-            </Card>
+        <div className="mt-10">
+          <div className="flex justify-between text-base font-medium text-gray-900">
+            <p>Subtotal</p>
+            <p>{formatPrice(subtotal)}</p>
+          </div>
+          <p className="mt-1 text-sm text-gray-500">
+            Shipping and taxes calculated at checkout.
+          </p>
+
+          <div className="mt-6">
+            <Button
+              onClick={handleCheckout}
+              className="w-full bg-black hover:bg-gray-800"
+            >
+              Checkout
+            </Button>
+          </div>
+
+          <div className="mt-6 text-center">
+            <Link href="/products">
+              <Button variant="link" className="text-sm">
+                Continue Shopping
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

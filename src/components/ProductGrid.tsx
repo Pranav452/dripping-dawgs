@@ -1,31 +1,15 @@
 'use client'
-import { supabase } from '@/lib/supabase'
 import { useCartStore } from '@/store/cart'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ProductSearch } from './ProductSearch'
 import Image from 'next/image'
+import { products } from '@/data/products'
+import { Button } from './ui/button'
 
 interface Category {
   id: string
   name: string
-}
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  image_url: string
-  description: string
-  category_id: string
-  brand: string
-  colors: string[]
-  size_available: string[]
-  stock: number
-  featured: boolean
-  categories: {
-    name: string
-  }
 }
 
 // Helper function to format price in Rupees
@@ -35,121 +19,151 @@ function formatPrice(price: number): string {
 }
 
 export function ProductGrid() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
-  const { addItem, items } = useCartStore()
+  const [filteredProducts, setFilteredProducts] = useState(products)
+  const [selectedColors, setSelectedColors] = useState<Record<string, string>>(
+    products.reduce((acc, product) => ({ ...acc, [product.id]: product.colors[0] }), {})
+  )
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>(
+    products.reduce((acc, product) => ({ ...acc, [product.id]: product.size_available[0] }), {})
+  )
+  const [categories] = useState<Category[]>([
+    { id: 't-shirts', name: 'T-Shirts' }
+  ])
+  const { items, addItem } = useCartStore()
 
-  const fetchProducts = async (search = '', category = '', sort = 'newest') => {
-    let query = supabase
-      .from('products')
-      .select(`
-        *,
-        categories (
-          name
-        )
-      `)
-
-    if (search) {
-      query = query.ilike('name', `%${search}%`)
-    }
-
-    if (category) {
-      query = query.eq('category_id', category)
-    }
-
-    switch (sort) {
-      case 'price_asc':
-        query = query.order('price', { ascending: true })
-        break
-      case 'price_desc':
-        query = query.order('price', { ascending: false })
-        break
-      case 'name_asc':
-        query = query.order('name', { ascending: true })
-        break
-      default:
-        query = query.order('created_at', { ascending: false })
-    }
-
-    const { data } = await query
-    if (data) setProducts(data)
+  const isInCart = (productId: string, size: string, color: string) => {
+    return items.some(item => 
+      item.id === productId && 
+      item.size === size && 
+      item.color === color
+    )
   }
 
-  useEffect(() => {
-    async function fetchCategories() {
-      const { data } = await supabase
-        .from('categories')
-        .select('*')
-        .order('name')
-      if (data) setCategories(data)
+  const handleSearch = async (query: string, category: string) => {
+    let filtered = [...products]
+    
+    if (query) {
+      const searchLower = query.toLowerCase()
+      filtered = filtered.filter(product => 
+        product.name.toLowerCase().includes(searchLower) ||
+        product.description.toLowerCase().includes(searchLower)
+      )
     }
-
-    fetchCategories()
-    fetchProducts()
-    setLoading(false)
-  }, [])
-
-  const isInCart = (productId: string) => {
-    return items.some(item => item.id === productId)
+    
+    if (category && category !== 'all') {
+      filtered = filtered.filter(product => product.category_id === category)
+    }
+    
+    setFilteredProducts(filtered)
   }
 
-  if (loading) return <div>Loading...</div>
+  const getImageUrl = (product: typeof products[0], color: string) => {
+    const colorImage = product.images.find(img => img.color === color)
+    return colorImage ? colorImage.url : product.image_url
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
       <ProductSearch
         categories={categories}
-        onSearch={fetchProducts}
+        onSearch={handleSearch}
       />
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div key={product.id} className="group relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-lg">
-            <Link href={`/products/${product.id}`} className="block aspect-square overflow-hidden">
+            <Link href={`/products/${product.id}`} className="block aspect-square overflow-hidden bg-white">
               <Image
-                src={product.image_url}
+                src={getImageUrl(product, selectedColors[product.id])}
                 alt={product.name}
                 width={400}
                 height={400}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                priority
               />
             </Link>
             <div className="p-4">
               <span className="text-sm text-muted-foreground">
-                {product.categories?.name}
+                T-Shirts
               </span>
               <Link href={`/products/${product.id}`}>
                 <h3 className="mt-1 font-semibold hover:underline">{product.name}</h3>
               </Link>
               <p className="mt-1 text-muted-foreground">{formatPrice(product.price)}</p>
-              <button 
-                className={`mt-4 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                  isInCart(product.id) 
+              
+              {/* Color Selection */}
+              <div className="mt-3">
+                <label className="text-sm text-gray-600 mb-1 block">Color:</label>
+                <div className="flex gap-2">
+                  {product.colors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColors(prev => ({ ...prev, [product.id]: color }))}
+                      className={`h-6 w-6 rounded-full border ${
+                        selectedColors[product.id] === color ? 'ring-2 ring-black ring-offset-2' : ''
+                      }`}
+                      style={{
+                        backgroundColor: color.toLowerCase(),
+                        border: color.toLowerCase() === 'white' ? '1px solid #e5e7eb' : 'none'
+                      }}
+                      title={color}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Size Selection */}
+              <div className="mt-3">
+                <label className="text-sm text-gray-600 mb-1 block">Size:</label>
+                <div className="flex gap-2 flex-wrap">
+                  {product.size_available.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSizes(prev => ({ ...prev, [product.id]: size }))}
+                      className={`px-2 py-1 text-sm border rounded ${
+                        selectedSizes[product.id] === size 
+                          ? 'border-black bg-black text-white' 
+                          : 'border-gray-200 hover:border-black'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button 
+                className={`mt-4 w-full ${
+                  isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])
                     ? 'bg-secondary text-secondary-foreground cursor-not-allowed' 
-                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'bg-black text-white hover:bg-gray-800'
                 }`}
-                onClick={() => !isInCart(product.id) && addItem({
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  quantity: 1,
-                  image_url: product.image_url
-                })}
-                disabled={isInCart(product.id)}
+                onClick={() => {
+                  const size = selectedSizes[product.id]
+                  const color = selectedColors[product.id]
+                  if (!isInCart(product.id, size, color)) {
+                    addItem({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      quantity: 1,
+                      image_url: getImageUrl(product, color),
+                      size,
+                      color
+                    })
+                  }
+                }}
+                disabled={isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])}
               >
-                {isInCart(product.id) ? 'In Cart' : 'Add to Cart'}
-              </button>
+                {isInCart(product.id, selectedSizes[product.id], selectedColors[product.id]) 
+                  ? 'In Cart' 
+                  : 'Add to Cart'
+                }
+              </Button>
             </div>
           </div>
         ))}
       </div>
-
-      {products.length === 0 && (
-        <div className="text-center text-muted-foreground">
-          <p>No products found</p>
-        </div>
-      )}
     </div>
   )
 }

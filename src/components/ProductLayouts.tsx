@@ -1,132 +1,189 @@
 'use client'
-import { ProductGallery } from './ProductGallery'
-import { useCartStore } from '@/store/cart'
-import { useState } from 'react'
 
-interface Product {
-  id: string
-  name: string
-  price: number
-  description: string
-  brand: string
-  colors: string[]
-  size_available: string[]
-  stock: number
-  images: { url: string; alt: string }[]
-}
+import { useState, useEffect } from 'react'
+import { useCartStore } from '@/store/cart'
+import { useWishlistStore } from '@/store/wishlist'
+import { Button } from '@/components/ui/button'
+import { Heart } from 'lucide-react'
+import { ProductCarousel } from './ProductCarousel'
+import { toast } from 'sonner'
+import { useAuth } from '@/lib/auth'
+import { Product } from '@/data/products'
 
 interface ProductLayoutProps {
   product: Product
-  variant?: 'default' | 'compact' | 'full'
-}
-
-// Helper function to format price in Rupees
-function formatPrice(price: number): string {
-  const priceInRupees = price * 83
-  return `₹${priceInRupees.toLocaleString('en-IN')}`
+  variant?: 'default' | 'slider' | 'grid'
 }
 
 export function ProductLayout({ product, variant = 'default' }: ProductLayoutProps) {
-  const { items, addItem } = useCartStore()
-  const [selectedSize, setSelectedSize] = useState('')
-  const [selectedColor, setSelectedColor] = useState('')
+  const [selectedSize, setSelectedSize] = useState<string>('')
+  const [selectedColor, setSelectedColor] = useState<string>(product.colors[0])
+  const [currentImages, setCurrentImages] = useState<string[]>([])
+  const { addItem } = useCartStore()
+  const { toggleItem, hasItem } = useWishlistStore()
+  const { user } = useAuth()
 
-  const isInCart = items.some(item => item.id === product.id)
+  useEffect(() => {
+    // Update images when color changes
+    const colorImages = product.images
+      .filter(img => img.color === selectedColor)
+      .map(img => img.url)
+    setCurrentImages(colorImages.length > 0 ? colorImages : [product.image_url])
+  }, [selectedColor, product])
 
-  if (variant === 'compact') {
-    return (
-      <div className="space-y-4">
-        <ProductGallery images={product.images} variant="single" />
-        <div>
-          <p className="text-sm text-muted-foreground">{product.brand}</p>
-          <h2 className="font-semibold">{product.name}</h2>
-          <p className="mt-2">{formatPrice(product.price)}</p>
-        </div>
-      </div>
-    )
+  const handleWishlistToggle = async () => {
+    if (!user) {
+      toast.error('Please login to add items to wishlist')
+      return
+    }
+    await toggleItem(product.id)
   }
 
-  if (variant === 'full') {
+  const getImageUrl = (color: string) => {
+    const colorImage = product.images.find(img => img.color === color)
+    return colorImage ? colorImage.url : product.image_url
+  }
+
+  if (variant === 'default') {
     return (
-      <div className="space-y-12">
-        <div className="grid gap-8 lg:grid-cols-2">
-          <ProductGallery images={product.images} variant="grid" />
-          <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ProductCarousel images={currentImages} selectedColor={selectedColor} />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">{product.brand}</p>
+            <h2 className="font-heading text-3xl md:text-4xl">{product.name}</h2>
+            <div className="flex space-x-2">
+              <p className="text-3xl font-bold tracking-tight">₹{product.price.toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+          <div className="space-y-4">
             <div>
-              <p className="text-lg text-gray-600">{product.brand}</p>
-              <h1 className="text-3xl font-bold">{product.name}</h1>
-              <p className="mt-2 text-2xl">{formatPrice(product.price)}</p>
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <p className="font-medium">Select Size</p>
-                <div className="flex flex-wrap gap-2">
-                  {product.size_available.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`rounded-md px-4 py-2 ${
-                        selectedSize === size
-                          ? 'bg-primary text-primary-foreground'
-                          : 'border hover:border-primary'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Color</p>
               </div>
-              <button
-                className={`w-full rounded-md px-6 py-3 ${
-                  isInCart || !selectedSize
-                    ? 'bg-secondary text-secondary-foreground cursor-not-allowed'
-                    : 'bg-primary text-primary-foreground hover:bg-primary/90'
-                }`}
-                disabled={isInCart || !selectedSize}
-                onClick={() => {
-                  if (selectedSize) {
-                    addItem({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      quantity: 1,
-                      image_url: product.images[0].url,
-                      size: selectedSize
-                    })
-                  }
-                }}
-              >
-                {isInCart ? 'In Cart' : 'Add to Cart'}
-              </button>
+              <div className="mt-3 flex gap-2">
+                {product.colors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`h-8 w-8 rounded-full border ${
+                      selectedColor === color ? 'ring-2 ring-black ring-offset-2' : ''
+                    }`}
+                    style={{
+                      backgroundColor: color.toLowerCase(),
+                      border: color.toLowerCase() === 'white' ? '1px solid #e5e7eb' : 'none'
+                    }}
+                    title={color}
+                  />
+                ))}
+              </div>
             </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">Size</p>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-3">
+                {product.size_available.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`flex items-center justify-center rounded-md border py-2 text-sm ${
+                      selectedSize === size
+                        ? 'border-black bg-black text-white'
+                        : 'border-gray-200 hover:border-black'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Button
+              onClick={() => {
+                if (!selectedSize) {
+                  toast.error('Please select a size')
+                  return
+                }
+                addItem({
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  quantity: 1,
+                  image_url: getImageUrl(selectedColor),
+                  size: selectedSize,
+                  color: selectedColor
+                })
+                toast.success('Added to cart!')
+              }}
+              className="w-full bg-black hover:bg-gray-800"
+            >
+              Add to Cart
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleWishlistToggle}
+              className="w-full"
+            >
+              <Heart
+                className={`mr-2 h-4 w-4 ${hasItem(product.id) ? 'fill-black' : ''}`}
+              />
+              {hasItem(product.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            </Button>
+          </div>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">{product.description}</p>
           </div>
         </div>
       </div>
     )
   }
 
-  // Default variant
   return (
-    <div className="grid gap-8 md:grid-cols-2">
-      <ProductGallery images={product.images} />
-      <div className="space-y-6">
-        <div>
-          <p className="text-lg text-muted-foreground">{product.brand}</p>
-          <h1 className="text-3xl font-bold">{product.name}</h1>
-          <p className="mt-2 text-2xl">{formatPrice(product.price)}</p>
-        </div>
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        <ProductCarousel images={currentImages} selectedColor={selectedColor} />
         <div className="space-y-4">
           <div className="space-y-2">
-            <p className="font-medium">Select Size</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="text-sm text-muted-foreground">{product.brand}</p>
+            <h2 className="font-heading text-3xl">{product.name}</h2>
+            <div className="flex space-x-2">
+              <p className="text-xl font-bold">₹{product.price.toLocaleString('en-IN')}</p>
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">Color</p>
+            </div>
+            <div className="mt-3 flex gap-2">
+              {product.colors.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setSelectedColor(color)}
+                  className={`h-8 w-8 rounded-full border ${
+                    selectedColor === color ? 'ring-2 ring-black ring-offset-2' : ''
+                  }`}
+                  style={{
+                    backgroundColor: color.toLowerCase(),
+                    border: color.toLowerCase() === 'white' ? '1px solid #e5e7eb' : 'none'
+                  }}
+                  title={color}
+                />
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">Size</p>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-3">
               {product.size_available.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
-                  className={`rounded-md px-4 py-2 ${
+                  className={`flex items-center justify-center rounded-md border py-2 text-sm ${
                     selectedSize === size
-                      ? 'bg-primary text-primary-foreground'
-                      : 'border hover:border-primary'
+                      ? 'border-black bg-black text-white'
+                      : 'border-gray-200 hover:border-black'
                   }`}
                 >
                   {size}
@@ -134,28 +191,38 @@ export function ProductLayout({ product, variant = 'default' }: ProductLayoutPro
               ))}
             </div>
           </div>
-          <button
-            className={`w-full rounded-md px-6 py-3 ${
-              isInCart || !selectedSize
-                ? 'bg-secondary text-secondary-foreground cursor-not-allowed'
-                : 'bg-primary text-primary-foreground hover:bg-primary/90'
-            }`}
-            disabled={isInCart || !selectedSize}
+          <Button
             onClick={() => {
-              if (selectedSize) {
-                addItem({
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  quantity: 1,
-                  image_url: product.images[0].url,
-                  size: selectedSize
-                })
+              if (!selectedSize) {
+                toast.error('Please select a size')
+                return
               }
+              addItem({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+                image_url: getImageUrl(selectedColor),
+                size: selectedSize,
+                color: selectedColor
+              })
+              toast.success('Added to cart!')
             }}
+            className="w-full bg-black hover:bg-gray-800"
           >
-            {isInCart ? 'In Cart' : 'Add to Cart'}
-          </button>
+            Add to Cart
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleWishlistToggle}
+            className="w-full"
+          >
+            <Heart
+              className={`mr-2 h-4 w-4 ${hasItem(product.id) ? 'fill-black' : ''}`}
+            />
+            {hasItem(product.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          </Button>
+          <p className="text-sm text-muted-foreground">{product.description}</p>
         </div>
       </div>
     </div>

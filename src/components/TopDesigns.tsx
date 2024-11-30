@@ -1,6 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Heart, ShoppingCart } from "lucide-react"
@@ -8,26 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from 'sonner'
 import { useCartStore } from '@/store/cart'
-import { Skeleton } from "@/components/ui/skeleton"
 import { useWishlistStore } from '@/store/wishlist'
 import { useAuth } from '@/lib/auth'
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  image_url: string
-  description: string
-  category_id: string
-  brand: string
-  colors: string[]
-  size_available: string[]
-  stock: number
-  featured: boolean
-  categories: {
-    name: string
-  }
-}
+import { products } from '@/data/products'
 
 // Helper function to format price in Rupees
 function formatPrice(price: number): string {
@@ -36,67 +18,52 @@ function formatPrice(price: number): string {
 }
 
 export function TopDesigns() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [isLoading, setIsLoading] = useState(true)
   const { addItem, items } = useCartStore()
+  const { toggleItem, hasItem } = useWishlistStore()
   const { user } = useAuth()
-  const { items: wishlistItems, toggleItem, initialize } = useWishlistStore()
+  const [selectedColors, setSelectedColors] = useState<Record<string, string>>(
+    products.reduce((acc, product) => ({ ...acc, [product.id]: product.colors[0] }), {})
+  )
+  const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>(
+    products.reduce((acc, product) => ({ ...acc, [product.id]: product.size_available[0] }), {})
+  )
 
-  useEffect(() => {
-    if (user) {
-      initialize(user.id)
-    }
-  }, [user, initialize])
+  const featuredProducts = products.filter(p => p.featured).slice(0, 4)
 
-  useEffect(() => {
-    async function fetchFeaturedProducts() {
-      setIsLoading(true)
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select(`
-            *,
-            categories (
-              name
-            )
-          `)
-          .eq('featured', true)
-          .order('created_at', { ascending: false })
-          .limit(8)
+  const isInCart = (productId: string, size: string, color: string) => {
+    return items.some(item => 
+      item.id === productId && 
+      item.size === size && 
+      item.color === color
+    )
+  }
 
-        if (error) throw error
+  const getImageUrl = (product: typeof products[0], color: string) => {
+    const colorImage = product.images.find(img => img.color === color)
+    return colorImage ? colorImage.url : product.image_url
+  }
 
-        if (data) {
-          setProducts(data)
-        }
-      } catch (err) {
-        console.error('Error fetching products:', err)
-        toast.error('Failed to load products')
-      } finally {
-        setIsLoading(false)
-      }
+  const handleAddToCart = (product: typeof products[0]) => {
+    if (!user) {
+      toast.error('Please login to add items to cart')
+      return
     }
 
-    fetchFeaturedProducts()
-  }, [])
+    const size = selectedSizes[product.id]
+    const color = selectedColors[product.id]
 
-  const handleAddToCart = async (product: Product) => {
-    try {
+    if (!isInCart(product.id, size, color)) {
       addItem({
         id: product.id,
         name: product.name,
         price: product.price,
         quantity: 1,
-        image_url: product.image_url
+        image_url: getImageUrl(product, color),
+        size,
+        color
       })
-      toast.success(`${product.name} added to cart!`)
-    } catch (error) {
-      toast.error('Failed to add item to cart')
+      toast.success('Added to cart')
     }
-  }
-
-  const isInCart = (productId: string) => {
-    return items.some(item => item.id === productId)
   }
 
   const handleWishlistToggle = async (productId: string) => {
@@ -107,99 +74,99 @@ export function TopDesigns() {
     await toggleItem(productId)
   }
 
-  if (isLoading) {
-    return (
-      <section className="bg-gray-100 pb-12 px-4 sm:px-6 lg:px-8"><br />
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Skeleton className="h-8 w-64 mx-auto mb-4" />
-            <Skeleton className="h-4 w-96 mx-auto" />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <Card key={i} className="overflow-hidden">
-                <CardHeader className="p-0">
-                  <Skeleton className="aspect-[3/4] w-full" />
-                </CardHeader>
-                <CardContent className="p-4">
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-6 w-full mb-2" />
-                  <Skeleton className="h-4 w-3/4 mb-2" />
-                  <Skeleton className="h-6 w-20" />
-                </CardContent>
-                <CardFooter className="p-4">
-                  <Skeleton className="h-10 w-full" />
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   return (
-    <section className="bg-gray-100 pb-12 px-4 sm:px-6 lg:px-8"><br /><br />
+    <section className="bg-gray-100 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">Featured Designs This Week</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore our handpicked collection of premium designs
-          </p>
+          <h2 className="text-3xl font-bold mb-4">Top Designs</h2>
+          <p className="text-gray-600">Discover our most popular t-shirt designs</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {featuredProducts.map((product) => (
             <Card key={product.id} className="overflow-hidden group">
               <Link href={`/products/${product.id}`}>
-                <CardHeader className="p-0">
-                  <div className="relative aspect-[3/4] overflow-hidden">
-                    <Image
-                      src={product.image_url}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <span className="text-sm text-muted-foreground">
-                    {product.categories?.name}
-                  </span>
+                <div className="relative aspect-square overflow-hidden bg-white">
+                  <Image
+                    src={getImageUrl(product, selectedColors[product.id])}
+                    alt={product.name}
+                    fill
+                    className="object-contain transform group-hover:scale-105 transition-all duration-300"
+                    priority
+                  />
+                </div>
+              </Link>
+              <CardContent className="p-4">
+                <Link href={`/products/${product.id}`}>
                   <CardTitle className="text-lg font-semibold mb-2">{product.name}</CardTitle>
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
                   <p className="text-lg font-bold">{formatPrice(product.price)}</p>
-                </CardContent>
-              </Link>
-              <CardFooter className="p-4 flex justify-between items-center">
-                {isInCart(product.id) ? (
-                  <Link href="/cart" className="flex-1 mr-2">
-                    <Button className="w-full">
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      View Cart
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button 
-                    className="flex-1 mr-2"
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Add to Cart
-                  </Button>
-                )}
-                <Button 
-                  variant="outline" 
+                </Link>
+
+                {/* Color Selection */}
+                <div className="mt-3">
+                  <label className="text-sm text-gray-600 mb-1 block">Color:</label>
+                  <div className="flex gap-2">
+                    {product.colors.map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColors(prev => ({ ...prev, [product.id]: color }))}
+                        className={`h-6 w-6 rounded-full border ${
+                          selectedColors[product.id] === color ? 'ring-2 ring-black ring-offset-2' : ''
+                        }`}
+                        style={{
+                          backgroundColor: color.toLowerCase(),
+                          border: color.toLowerCase() === 'white' ? '1px solid #e5e7eb' : 'none'
+                        }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Size Selection */}
+                <div className="mt-3">
+                  <label className="text-sm text-gray-600 mb-1 block">Size:</label>
+                  <div className="flex gap-2 flex-wrap">
+                    {product.size_available.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSizes(prev => ({ ...prev, [product.id]: size }))}
+                        className={`px-2 py-1 text-sm border rounded ${
+                          selectedSizes[product.id] === size 
+                            ? 'border-black bg-black text-white' 
+                            : 'border-gray-200 hover:border-black'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="p-4 pt-0 flex gap-2">
+                <Button
+                  className={`flex-1 ${
+                    isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])
+                      ? 'bg-secondary text-secondary-foreground cursor-not-allowed'
+                      : 'bg-black hover:bg-gray-800 text-white'
+                  }`}
+                  onClick={() => handleAddToCart(product)}
+                  disabled={isInCart(product.id, selectedSizes[product.id], selectedColors[product.id])}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  {isInCart(product.id, selectedSizes[product.id], selectedColors[product.id]) 
+                    ? 'In Cart' 
+                    : 'Add to Cart'
+                  }
+                </Button>
+                <Button
+                  variant="outline"
                   size="icon"
                   onClick={() => handleWishlistToggle(product.id)}
-                  className={wishlistItems.includes(product.id) ? "text-red-500" : ""}
+                  className="hover:bg-gray-100"
                 >
-                  <Heart 
-                    className="h-4 w-4" 
-                    fill={wishlistItems.includes(product.id) ? "currentColor" : "none"} 
-                  />
-                  <span className="sr-only">Add to wishlist</span>
+                  <Heart className="w-4 h-4" fill={hasItem(product.id) ? "currentColor" : "none"} />
                 </Button>
               </CardFooter>
             </Card>
@@ -207,11 +174,10 @@ export function TopDesigns() {
         </div>
 
         <div className="text-center mt-12">
-          <Link 
-            href="/products" 
-            className="inline-flex items-center justify-center h-10 px-8 py-2 bg-black text-white rounded-md hover:bg-gray-800 transition-colors duration-200"
-          >
-            View All Designs
+          <Link href="/products">
+            <Button className="bg-black hover:bg-gray-800 text-white px-8">
+              View All Designs
+            </Button>
           </Link>
         </div>
       </div>

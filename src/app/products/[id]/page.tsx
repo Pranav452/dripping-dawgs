@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from "next/image"
-import { ShoppingCart, Heart, ChevronDown } from "lucide-react"
-import { supabase } from '@/lib/supabase'
+import { ShoppingCart, Heart } from "lucide-react"
 import { useCartStore } from '@/store/cart'
 import { useWishlistStore } from '@/store/wishlist'
 import { useAuth } from '@/lib/auth'
@@ -19,59 +18,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  description: string
-  image_url: string
-  category_id: string
-  brand: string
-  colors: string[]
-  size_available: string[]
-  stock: number
-  featured: boolean
-  categories: {
-    name: string
-  }
-}
+import { products } from '@/data/products'
 
 // Helper function to format price in Rupees
 function formatPrice(price: number): string {
-  // Convert dollar price to rupees (approximate conversion rate: 1 USD = 83 INR)
   const priceInRupees = price * 83
   return `₹${priceInRupees.toLocaleString('en-IN')}`
 }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
-  const [product, setProduct] = useState<Product | null>(null)
+  const [product, setProduct] = useState<typeof products[0] | null>(null)
   const [selectedSize, setSelectedSize] = useState('')
+  const [selectedColor, setSelectedColor] = useState('')
   const { addItem } = useCartStore()
   const { toggleItem, hasItem } = useWishlistStore()
   const { user } = useAuth()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function fetchProduct() {
-      const { data: productData } = await supabase
-        .from('products')
-        .select(`
-          *,
-          categories (
-            name
-          )
-        `)
-        .eq('id', params.id)
-        .single()
-
-      if (productData) {
-        setProduct(productData)
-      }
-      setLoading(false)
+    // Find product from hardcoded data
+    const foundProduct = products.find(p => p.id === params.id)
+    if (foundProduct) {
+      setProduct(foundProduct)
+      setSelectedColor(foundProduct.colors[0]) // Set default color
     }
-
-    fetchProduct()
+    setLoading(false)
   }, [params.id])
 
   const handleAddToCart = () => {
@@ -80,18 +51,28 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       return
     }
 
+    if (!selectedColor) {
+      toast.error('Please select a color')
+      return
+    }
+
     if (!user) {
       toast.error('Please login to add items to cart')
       return
     }
 
+    if (!product) return
+
+    const selectedImage = product.images.find(img => img.color === selectedColor)?.url || product.image_url
+
     addItem({
-      id: product!.id,
-      name: product!.name,
-      price: product!.price,
+      id: product.id,
+      name: product.name,
+      price: product.price,
       quantity: 1,
-      image_url: product!.image_url,
-      size: selectedSize
+      image_url: selectedImage,
+      size: selectedSize,
+      color: selectedColor
     })
     
     toast.success('Added to cart!')
@@ -103,7 +84,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
       toast.error('Please login to add items to wishlist')
       return
     }
-    await toggleItem(product!.id)
+    if (!product) return
+    await toggleItem(product.id)
   }
 
   if (loading || !product) {
@@ -122,22 +104,16 @@ export default function ProductPage({ params }: { params: { id: string } }) {
     )
   }
 
-  // Create an array of images (in a real app, this would come from your database)
-  // For now, we'll duplicate the image to simulate multiple views/colors
-  const productImages = [
-    product.image_url,
-    product.image_url,
-    product.image_url,
-    product.image_url
-  ]
-
-  // Define standard sizes
-  const standardSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+  // Create an array of images based on colors
+  const productImages = product.images.map(img => img.url)
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Left Column - Product Info */}
+        {/* Product Images */}
+        <ProductCarousel images={productImages} />
+
+        {/* Product Info */}
         <motion.div
           className="flex flex-col space-y-8"
           initial={{ opacity: 0 }}
@@ -146,7 +122,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
         >
           {/* Breadcrumb */}
           <div className="text-sm text-gray-500">
-            Shop / {product.categories?.name} / {product.name}
+            Shop / T-Shirts / {product.name}
           </div>
 
           {/* Product Title and Price */}
@@ -159,16 +135,37 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           <div className="space-y-4 text-sm">
             <p className="leading-relaxed">{product.description}</p>
             <ul className="list-disc list-inside space-y-1 text-gray-600">
-              <li>Handcrafted sculptural band ring in sterling silver</li>
-              <li>Logo engraved at inner band</li>
-              <li>Textured at surface</li>
-              <li>Color: Grey</li>
-              <li>925 sterling silver</li>
-              <li>Made in Montreal</li>
+              <li>100% Premium Cotton</li>
+              <li>Regular fit</li>
+              <li>Machine wash</li>
+              <li>Made in India</li>
             </ul>
           </div>
 
-          {/* Size Selection Dropdown */}
+          {/* Color Selection */}
+          <div className="space-y-3">
+            <label className="block text-sm">SELECT A COLOR</label>
+            <div className="flex gap-2">
+              {product.colors.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setSelectedColor(color)}
+                  className={`w-12 h-12 rounded-full border-2 transition-all ${
+                    selectedColor === color 
+                      ? 'border-black scale-110' 
+                      : 'border-transparent hover:border-gray-300'
+                  }`}
+                  style={{ 
+                    backgroundColor: color.toLowerCase(),
+                    border: color.toLowerCase() === 'white' ? '1px solid #e5e5e5' : undefined
+                  }}
+                  title={color}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Size Selection */}
           <div className="space-y-3">
             <label className="block text-sm">SELECT A SIZE</label>
             <Select onValueChange={setSelectedSize} value={selectedSize}>
@@ -176,16 +173,16 @@ export default function ProductPage({ params }: { params: { id: string } }) {
                 <SelectValue placeholder="Choose your size" />
               </SelectTrigger>
               <SelectContent>
-                {standardSizes.map((size) => (
+                {product.size_available.map((size) => (
                   <SelectItem key={size} value={size} className="cursor-pointer">
-                    {size} - {getSizeDescription(size)}
+                    {size}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {selectedSize && (
               <p className="text-sm text-gray-500 mt-2">
-                Selected: {selectedSize} - {getSizeDescription(selectedSize)}
+                Selected: {selectedSize}
               </p>
             )}
           </div>
@@ -195,7 +192,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <Button
               className="flex-1 h-14 text-base bg-black hover:bg-black/90"
               onClick={handleAddToCart}
-              disabled={!selectedSize}
+              disabled={!selectedSize || !selectedColor}
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
               Add to Cart
@@ -212,68 +209,8 @@ export default function ProductPage({ params }: { params: { id: string } }) {
               />
             </Button>
           </div>
-
-          {/* Size Guide */}
-          <div className="text-sm text-gray-600">
-            <h3 className="font-medium mb-2">Size Guide</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="font-medium">XS</p>
-                <p>Chest: 81-86 cm</p>
-                <p>Waist: 66-71 cm</p>
-              </div>
-              <div>
-                <p className="font-medium">S</p>
-                <p>Chest: 89-94 cm</p>
-                <p>Waist: 74-79 cm</p>
-              </div>
-              <div>
-                <p className="font-medium">M</p>
-                <p>Chest: 97-102 cm</p>
-                <p>Waist: 81-86 cm</p>
-              </div>
-              <div>
-                <p className="font-medium">L</p>
-                <p>Chest: 104-109 cm</p>
-                <p>Waist: 89-94 cm</p>
-              </div>
-              <div>
-                <p className="font-medium">XL</p>
-                <p>Chest: 112-117 cm</p>
-                <p>Waist: 97-102 cm</p>
-              </div>
-              <div>
-                <p className="font-medium">XXL</p>
-                <p>Chest: 119-124 cm</p>
-                <p>Waist: 104-109 cm</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right Column - Product Images */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="lg:sticky lg:top-24"
-        >
-          <ProductCarousel images={productImages} />
         </motion.div>
       </div>
     </div>
   )
-}
-
-// Helper function to get size descriptions
-function getSizeDescription(size: string): string {
-  const descriptions: Record<string, string> = {
-    'XS': 'Extra Small (81-86 cm)',
-    'S': 'Small (89-94 cm)',
-    'M': 'Medium (97-102 cm)',
-    'L': 'Large (104-109 cm)',
-    'XL': 'Extra Large (112-117 cm)',
-    'XXL': 'Double Extra Large (119-124 cm)'
-  }
-  return descriptions[size] || size
 }
