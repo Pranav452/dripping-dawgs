@@ -28,6 +28,12 @@ interface Product {
   }
 }
 
+// Helper function to format price in Rupees
+function formatPrice(price: number): string {
+  const priceInRupees = price * 83
+  return `₹${priceInRupees.toLocaleString('en-IN')}`
+}
+
 export function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
@@ -116,7 +122,7 @@ export function ProductGrid() {
               <Link href={`/products/${product.id}`}>
                 <h3 className="mt-1 font-semibold hover:underline">{product.name}</h3>
               </Link>
-              <p className="mt-1 text-muted-foreground">${product.price}</p>
+              <p className="mt-1 text-muted-foreground">{formatPrice(product.price)}</p>
               <button 
                 className={`mt-4 w-full rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                   isInCart(product.id) 

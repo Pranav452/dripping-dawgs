@@ -9,6 +9,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { toast } from 'sonner'
 import { useCartStore } from '@/store/cart'
 import { Skeleton } from "@/components/ui/skeleton"
+import { useWishlistStore } from '@/store/wishlist'
+import { useAuth } from '@/lib/auth'
 
 interface Product {
   id: string
@@ -27,11 +29,24 @@ interface Product {
   }
 }
 
+// Helper function to format price in Rupees
+function formatPrice(price: number): string {
+  const priceInRupees = price * 83
+  return `₹${priceInRupees.toLocaleString('en-IN')}`
+}
+
 export function TopDesigns() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [wishlist, setWishlist] = useState<Set<string>>(new Set())
   const { addItem, items } = useCartStore()
+  const { user } = useAuth()
+  const { items: wishlistItems, toggleItem, initialize } = useWishlistStore()
+
+  useEffect(() => {
+    if (user) {
+      initialize(user.id)
+    }
+  }, [user, initialize])
 
   useEffect(() => {
     async function fetchFeaturedProducts() {
@@ -84,18 +99,12 @@ export function TopDesigns() {
     return items.some(item => item.id === productId)
   }
 
-  const toggleWishlist = (productId: string) => {
-    setWishlist(prev => {
-      const newWishlist = new Set(prev)
-      if (newWishlist.has(productId)) {
-        newWishlist.delete(productId)
-        toast.success('Removed from wishlist')
-      } else {
-        newWishlist.add(productId)
-        toast.success('Added to wishlist')
-      }
-      return newWishlist
-    })
+  const handleWishlistToggle = async (productId: string) => {
+    if (!user) {
+      toast.error('Please login to add items to wishlist')
+      return
+    }
+    await toggleItem(productId)
   }
 
   if (isLoading) {
@@ -160,7 +169,7 @@ export function TopDesigns() {
                   </span>
                   <CardTitle className="text-lg font-semibold mb-2">{product.name}</CardTitle>
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-                  <p className="text-lg font-bold">${product.price.toFixed(2)}</p>
+                  <p className="text-lg font-bold">{formatPrice(product.price)}</p>
                 </CardContent>
               </Link>
               <CardFooter className="p-4 flex justify-between items-center">
@@ -183,10 +192,13 @@ export function TopDesigns() {
                 <Button 
                   variant="outline" 
                   size="icon"
-                  onClick={() => toggleWishlist(product.id)}
-                  className={wishlist.has(product.id) ? "text-red-500" : ""}
+                  onClick={() => handleWishlistToggle(product.id)}
+                  className={wishlistItems.includes(product.id) ? "text-red-500" : ""}
                 >
-                  <Heart className="h-4 w-4" fill={wishlist.has(product.id) ? "currentColor" : "none"} />
+                  <Heart 
+                    className="h-4 w-4" 
+                    fill={wishlistItems.includes(product.id) ? "currentColor" : "none"} 
+                  />
                   <span className="sr-only">Add to wishlist</span>
                 </Button>
               </CardFooter>

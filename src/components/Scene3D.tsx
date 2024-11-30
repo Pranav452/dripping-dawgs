@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const environments = [
-  "apartment",
+  
   "city",
   "dawn",
   "forest",

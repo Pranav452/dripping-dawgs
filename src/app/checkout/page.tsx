@@ -5,6 +5,12 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+// Helper function to format price in Rupees
+function formatPrice(price: number): string {
+  const priceInRupees = price * 83
+  return `₹${priceInRupees.toLocaleString('en-IN')}`
+}
+
 export default function CheckoutPage() {
   const { items } = useCartStore()
   const { user } = useAuth()
@@ -160,21 +166,21 @@ export default function CheckoutPage() {
             {items.map((item) => (
               <div key={item.id} className="flex justify-between">
                 <span>{item.name} × {item.quantity}</span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+                <span>{formatPrice(item.price * item.quantity)}</span>
               </div>
             ))}
             <div className="border-t pt-4 space-y-2">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
-                <span>${shipping.toFixed(2)}</span>
+                <span>{formatPrice(shipping)}</span>
               </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>${finalTotal.toFixed(2)}</span>
+                <span>{formatPrice(finalTotal)}</span>
               </div>
             </div>
           </div>

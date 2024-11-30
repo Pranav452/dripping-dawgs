@@ -9,6 +9,12 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
 
+// Helper function to format price in Rupees
+function formatPrice(price: number): string {
+  const priceInRupees = price * 83
+  return `₹${priceInRupees.toLocaleString('en-IN')}`
+}
+
 export default function CartPage() {
   const { items, removeItem, updateQuantity } = useCartStore()
   const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
@@ -59,21 +65,28 @@ export default function CartPage() {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      key={item.id}
+                      key={`${item.id}-${item.size}`}
                       className="flex gap-6 pb-6 border-b last:border-b-0 last:pb-0 group hover:bg-gray-50 p-4 rounded-lg transition-all duration-300"
                     >
-                      <div className="relative h-40 w-40 flex-shrink-0 rounded-xl overflow-hidden group-hover:shadow-md transition-all duration-300">
+                      <Link 
+                        href={`/products/${item.id}`}
+                        className="relative h-40 w-40 flex-shrink-0 rounded-xl overflow-hidden group-hover:shadow-md transition-all duration-300"
+                      >
                         <Image
                           src={item.image_url}
                           alt={item.name}
                           fill
                           className="object-cover transform group-hover:scale-105 transition-all duration-500"
                         />
-                      </div>
+                      </Link>
                       <div className="flex flex-1 flex-col justify-between">
                         <div>
-                          <h3 className="text-xl font-bold">{item.name}</h3>
-                          <p className="text-lg text-gray-600 mt-1">${item.price.toFixed(2)}</p>
+                          <Link href={`/products/${item.id}`}>
+                            <h3 className="text-xl font-bold hover:text-yellow-600 transition-colors duration-300">
+                              {item.name}
+                            </h3>
+                          </Link>
+                          <p className="text-lg text-gray-600 mt-1">{formatPrice(item.price)}</p>
                           <div className="flex gap-4 mt-2">
                             {item.size && (
                               <span className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-600">
@@ -91,7 +104,7 @@ export default function CartPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
+                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1), item.size)}
                             className="rounded-full hover:bg-black hover:text-white transition-all duration-300"
                           >
                             <Minus className="h-4 w-4" />
@@ -102,7 +115,7 @@ export default function CartPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => updateQuantity(item.id, item.quantity + 1, item.size)}
                             className="rounded-full hover:bg-black hover:text-white transition-all duration-300"
                           >
                             <Plus className="h-4 w-4" />
@@ -113,13 +126,13 @@ export default function CartPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(item.id, item.size)}
                           className="text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all duration-300"
                         >
                           <Trash2 className="h-5 w-5" />
                         </Button>
                         <p className="font-bold text-2xl">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
                     </motion.div>
@@ -136,21 +149,21 @@ export default function CartPage() {
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+                  <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
                 </div>
                 {shipping > 0 && (
                   <p className="text-sm text-gray-500">
-                    Free shipping on orders over $100
+                    Free shipping on orders over ₹8,300
                   </p>
                 )}
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center text-2xl font-bold">
                     <span>Total</span>
-                    <span>${finalTotal.toFixed(2)}</span>
+                    <span>{formatPrice(finalTotal)}</span>
                   </div>
                 </div>
               </div>
