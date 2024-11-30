@@ -71,8 +71,8 @@ export function ProductGrid() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="group relative overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-lg">
-            <Link href={`/products/${product.id}`} className="block aspect-square overflow-hidden bg-white">
+          <div key={product.id} className="group relative overflow-hidden rounded-lg border bg-black text-card-foreground shadow-sm transition-all hover:shadow-lg">
+            <Link href={`/products/${product.id}`} className="block aspect-square overflow-hidden bg-black">
               <Image
                 src={getImageUrl(product, selectedColors[product.id])}
                 alt={product.name}
