@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, CheckCircle2, Heart } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface OrderItemData {
   quantity: number
@@ -68,7 +69,7 @@ const motivationalMessages = [
   "You've made an amazing choice! 🔥"
 ]
 
-export default function ThankYouPage() {
+function ThankYouContent() {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('orderId')
   const [order, setOrder] = useState<OrderDetails | null>(null)
@@ -301,5 +302,49 @@ export default function ThankYouPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function ThankYouSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="space-y-8">
+        <div className="text-center space-y-4">
+          <Skeleton className="h-8 w-3/4 mx-auto" />
+          <Skeleton className="h-6 w-1/2 mx-auto" />
+        </div>
+        <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="p-6 space-y-6">
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-1/4" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-1/4" />
+              <div className="space-y-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex gap-4">
+                    <Skeleton className="h-24 w-24" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={<ThankYouSkeleton />}>
+      <ThankYouContent />
+    </Suspense>
   )
 }
