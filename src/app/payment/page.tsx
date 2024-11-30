@@ -32,10 +32,14 @@ interface RazorpayOptions {
   theme?: {
     color: string
   }
+  modal?: {
+    confirm_close?: boolean
+  }
+  image?: string
 }
 
 interface RazorpayInstance {
-  on(event: string, handler: () => void): void
+  on(event: string, handler: (response: RazorpayErrorResponse) => void): void
   open(): void
 }
 
@@ -45,92 +49,90 @@ interface RazorpayResponse {
   razorpay_signature: string
 }
 
+interface RazorpayErrorResponse {
+  error: {
+    code: string
+    description: string
+    source: string
+    step: string
+    reason: string
+  }
+}
+
 export default function PaymentPage() {
   const [processing, setProcessing] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isScriptLoaded, setIsScriptLoaded] = useState(false)
+  const [orderId, setOrderId] = useState<string>('')
+  const [shippingDetails, setShippingDetails] = useState<{
+    name: string
+    email: string
+    phone: string
+    address: string
+    city: string
+    postalCode: string
+  } | null>(null)
+  
   const router = useRouter()
   const { items, clearCart } = useCartStore()
   const { user } = useAuth()
   const total = items.reduce((acc, item) => acc + (item.price * item.quantity), 0)
 
-  const validateProducts = async () => {
-    try {
-      // Verify all products exist in database
-      const productIds = Array.from(new Set(items.map(item => item.id)))
-      console.log('Validating products:', productIds)
-      
-      const { data: products, error: productsError } = await supabase
-        .from('products')
-        .select('id')
-        .in('id', productIds)
-
-      if (productsError) {
-        console.error('Error fetching products:', productsError)
-        throw new Error('Failed to validate products')
-      }
-
-      if (!products) {
-        console.error('No products found')
-        throw new Error('Failed to validate products')
-      }
-
-      console.log('Found products:', products)
-      const foundProductIds = products.map(p => p.id)
-      const missingProducts = items.filter(item => !foundProductIds.includes(item.id))
-
-      if (missingProducts.length > 0) {
-        const missingNames = missingProducts.map(p => p.name).join(', ')
-        throw new Error(`Some products are no longer available: ${missingNames}`)
-      }
-
-      return true
-    } catch (err) {
-      console.error('Product validation error:', err)
-      throw err
+  useEffect(() => {
+    // Load shipping details from session storage
+    const shippingDetailsStr = sessionStorage.getItem('shippingDetails')
+    if (shippingDetailsStr) {
+      setShippingDetails(JSON.parse(shippingDetailsStr))
     }
-  }
+
+    // Create Razorpay order
+    async function createOrder() {
+      try {
+        const orderRes = await fetch('/api/razorpay', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: total })
+        })
+
+        if (!orderRes.ok) {
+          const error = await orderRes.json()
+          throw new Error(error.message || 'Failed to create order')
+        }
+
+        const data = await orderRes.json()
+        setOrderId(data.id)
+        setProcessing(false)
+      } catch (error) {
+        console.error('Error creating order:', error)
+        setError(error instanceof Error ? error.message : 'Failed to create order')
+      }
+    }
+
+    if (isScriptLoaded) {
+      createOrder()
+    }
+  }, [isScriptLoaded, total])
 
   const makePayment = async () => {
-    if (!isScriptLoaded) {
-      console.log('Waiting for Razorpay script to load...')
-      return
-    }
-
     try {
-      // Validate products first
-      await validateProducts()
-
-      // Get shipping details from session storage
-      const shippingDetailsStr = sessionStorage.getItem('shippingDetails')
-      if (!shippingDetailsStr) {
-        setError('Shipping details not found')
-        setTimeout(() => router.push('/checkout'), 2000)
-        return
+      if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+        throw new Error('Razorpay key is not configured')
       }
 
-      const shippingDetails = JSON.parse(shippingDetailsStr)
-
-      // Create Razorpay order
-      const orderRes = await fetch('/api/razorpay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: total })
-      })
-
-      if (!orderRes.ok) {
-        const error = await orderRes.json()
-        throw new Error(error.message || 'Failed to create order')
+      if (!shippingDetails) {
+        throw new Error('Shipping details not found')
       }
 
-      const data = await orderRes.json()
+      if (!orderId) {
+        throw new Error('Order ID not found')
+      }
 
-      const options = {
+      const options: RazorpayOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        name: 'Dripping Dawgs',
-        currency: data.currency,
-        amount: data.amount,
-        order_id: data.id,
+        name: 'DrippingDawgs',
+        currency: 'INR',
+        amount: total * 100,
+        order_id: orderId,
         description: 'Thank you for your purchase',
         image: '/logo.png',
         handler: async function (response: RazorpayResponse) {
@@ -236,50 +238,30 @@ export default function PaymentPage() {
         },
         prefill: {
           name: shippingDetails.name,
-          email: user?.email,
+          email: shippingDetails.email,
           contact: shippingDetails.phone
         },
         theme: {
           color: '#000000'
         },
         modal: {
-          ondismiss: function() {
-            setError('Payment cancelled')
-            setTimeout(() => router.push('/checkout'), 2000)
-          }
+          confirm_close: true
         }
       }
 
       const paymentObject = new window.Razorpay(options)
-      paymentObject.on('payment.failed', function (response: RazorpayResponse) {
+      paymentObject.on('payment.failed', function (response: RazorpayErrorResponse) {
         console.error('Payment failed:', response.error)
         setError(response.error.description)
         setTimeout(() => router.push('/checkout'), 2000)
       })
       paymentObject.open()
-      setProcessing(false)
-    } catch (err: any) {
-      console.error('Error initializing payment:', err)
-      setError(err.message || 'Failed to initialize payment')
+    } catch (error) {
+      console.error('Error in makePayment:', error)
+      setError(error instanceof Error ? error.message : 'Payment initialization failed')
       setTimeout(() => router.push('/checkout'), 2000)
     }
   }
-
-  useEffect(() => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    if (items.length === 0) {
-      router.push('/cart')
-      return
-    }
-
-    if (isScriptLoaded) {
-      makePayment()
-    }
-  }, [user, items, total, router, clearCart, isScriptLoaded])
 
   if (error) {
     return (

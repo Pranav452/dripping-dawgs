@@ -19,6 +19,18 @@ interface OrderItemData {
   }
 }
 
+interface SupabaseOrderItemResponse {
+  quantity: number
+  price_at_time: number
+  size: string
+  color: string
+  products: {
+    id: string
+    name: string
+    image_url: string
+  }
+}
+
 interface OrderDetails {
   id: string
   order_number: number
@@ -100,9 +112,26 @@ export default function ThankYouPage() {
 
         if (itemsError) throw itemsError
 
+        const validatedItemsData = (itemsData as unknown as SupabaseOrderItemResponse[]).map(item => {
+          if (!item.products || typeof item.products !== 'object') {
+            throw new Error('Invalid product data structure')
+          }
+          return {
+            quantity: item.quantity,
+            price_at_time: item.price_at_time,
+            size: item.size,
+            color: item.color,
+            products: {
+              id: item.products.id,
+              name: item.products.name,
+              image_url: item.products.image_url
+            }
+          } as OrderItemData
+        })
+
         const orderDetails: OrderDetails = {
           ...orderData,
-          items: (itemsData as OrderItemData[]).map((item) => ({
+          items: validatedItemsData.map((item) => ({
             id: item.products.id,
             name: item.products.name,
             quantity: item.quantity,
