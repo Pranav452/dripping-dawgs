@@ -10,8 +10,39 @@ import { toast } from 'sonner'
 
 declare global {
   interface Window {
-    Razorpay: any
+    Razorpay: {
+      new(options: RazorpayOptions): RazorpayInstance
+    }
   }
+}
+
+interface RazorpayOptions {
+  key: string
+  amount: number
+  currency: string
+  name: string
+  description: string
+  order_id: string
+  handler: (response: RazorpayResponse) => void
+  prefill?: {
+    name?: string
+    email?: string
+    contact?: string
+  }
+  theme?: {
+    color: string
+  }
+}
+
+interface RazorpayInstance {
+  on(event: string, handler: () => void): void
+  open(): void
+}
+
+interface RazorpayResponse {
+  razorpay_payment_id: string
+  razorpay_order_id: string
+  razorpay_signature: string
 }
 
 export default function PaymentPage() {
@@ -102,7 +133,7 @@ export default function PaymentPage() {
         order_id: data.id,
         description: 'Thank you for your purchase',
         image: '/logo.png',
-        handler: async function (response: any) {
+        handler: async function (response: RazorpayResponse) {
           try {
             console.log('Payment successful, processing order...')
             
@@ -220,7 +251,7 @@ export default function PaymentPage() {
       }
 
       const paymentObject = new window.Razorpay(options)
-      paymentObject.on('payment.failed', function (response: any) {
+      paymentObject.on('payment.failed', function (response: RazorpayResponse) {
         console.error('Payment failed:', response.error)
         setError(response.error.description)
         setTimeout(() => router.push('/checkout'), 2000)

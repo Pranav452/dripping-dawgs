@@ -23,10 +23,10 @@ export async function POST(req: Request) {
       amount: order.amount,
       currency: order.currency
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating Razorpay order:', error)
     return NextResponse.json(
-      { error: error.message || 'Error creating order' },
+      { error: error instanceof Error ? error.message : 'Error creating order' },
       { status: 500 }
     )
   }

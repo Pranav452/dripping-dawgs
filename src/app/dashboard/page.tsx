@@ -100,7 +100,7 @@ export default function DashboardPage() {
         
         // Calculate statistics
         const popularSizes = orders.reduce((acc, order) => {
-          order.order_items.forEach(item => {
+          order.order_items.forEach((item: OrderItem) => {
             if (item.size) {
               acc[item.size] = (acc[item.size] || 0) + item.quantity
             }

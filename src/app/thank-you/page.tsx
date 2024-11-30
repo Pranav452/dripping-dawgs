@@ -105,7 +105,17 @@ export default function ThankYouPage() {
         // Format order details
         const orderDetails: OrderDetails = {
           ...orderData,
-          items: itemsData.map((item: any) => ({
+          items: itemsData.map((item: {
+            quantity: number
+            price_at_time: number
+            size: string
+            color: string
+            products: {
+              id: string
+              name: string
+              image_url: string
+            }
+          }) => ({
             id: item.products.id,
             name: item.products.name,
             quantity: item.quantity,
@@ -117,9 +127,9 @@ export default function ThankYouPage() {
         }
 
         setOrder(orderDetails)
-      } catch (err: any) {
-        console.error('Error fetching order details:', err)
-        setError(err.message || 'Failed to fetch order details')
+      } catch (error) {
+        console.error('Error fetching order details:', error)
+        setError(error instanceof Error ? error.message : 'Failed to fetch order details')
       } finally {
         setLoading(false)
       }
