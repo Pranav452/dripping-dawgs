@@ -37,8 +37,9 @@ export function Header() {
                   src="/LOGO.png" 
                   alt="DQ Logo" 
                   width={60} 
-                  height={60} 
-                  className="object-contain"
+                  height={60}
+                  style={{ width: 'auto', height: 'auto' }}
+                  priority 
                 />
               </Link>
             </div>
