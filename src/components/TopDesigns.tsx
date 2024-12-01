@@ -28,7 +28,7 @@ export function TopDesigns() {
     products.reduce((acc, product) => ({ ...acc, [product.id]: product.size_available[0] }), {})
   )
 
-  const featuredProducts = products.filter(p => p.featured).slice(0, 4)
+  const featuredProducts = products.filter(p => p.featured).slice(0, 3)
 
   const isInCart = (productId: string, size: string, color: string) => {
     return items.some(item => 
@@ -75,8 +75,16 @@ export function TopDesigns() {
   }
 
   return (
-    <section className="bg-black pb-12 px-4 sm:px-6 lg:px-8"><br /><br />
-      <div className="max-w-7xl mx-auto">
+    <section className="bg-black pb-12 px-4 sm:px-6 lg:px-8 relative">
+      {/* Bottom Glowing Line */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden">
+        <div className="relative h-24">
+          <div className="absolute bottom-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent animate-pulse" />
+          <div className="absolute bottom-0 w-full h-1 bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent blur-sm" />
+          <div className="absolute bottom-0 w-full h-2 bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent blur-md" />
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto"><br /><br /><br />
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4 text-white">TOP DESIGNS</h2>
           <p className="text-gray-400">Discover our most popular t-shirt designs</p>
@@ -111,14 +119,14 @@ export function TopDesigns() {
                       <button
                         key={color}
                         onClick={() => setSelectedColors(prev => ({ ...prev, [product.id]: color }))}
-                        className={`h-7 w-7 rounded-full transform hover:scale-110 transition-all duration-300 ${
+                        className={`h-7 w-7 rounded-full transform hover:scale-110 transition-all duration-300 ring-1 ring-white ${
                           selectedColors[product.id] === color 
                             ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-black' 
                             : 'hover:ring-2 hover:ring-yellow-500/50 hover:ring-offset-2 hover:ring-offset-black'
                         }`}
                         style={{
                           backgroundColor: color.toLowerCase(),
-                          border: color.toLowerCase() === 'white' ? '1px solid #4a4a4a' : 'none'
+                          border: '2px solid white'
                         }}
                         title={color}
                       />
@@ -187,7 +195,7 @@ export function TopDesigns() {
             <Button className="bg-yellow-500 hover:bg-yellow-400 text-black px-8 py-6 text-lg font-medium transform hover:scale-[1.02] transition-all duration-300">
               View All Designs
             </Button>
-          </Link>
+          </Link><br /><br />
         </div>
       </div>
     </section>

@@ -9,9 +9,11 @@ export function AboutUs() {
   const ordersCount = useCounter(5000);
 
   return (
-    <section className="bg-black text-yellow-400">
-      <div className="mx-auto max-w-7xl px-8 py-20 md:py-28">
-        <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center">About DrippingDog</h2>
+    <section className="bg-black text-yellow-400 relative pt-16">
+      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-yellow-400/10 to-transparent" />
+      
+      <div className="relative mx-auto max-w-7xl px-8 py-24 md:py-32">
+        <h2 className="text-4xl md:text-5xl font-bold mb-20 text-center">About DrippingDog</h2>
         <div className="flex flex-col md:flex-row justify-between gap-16 max-w-7xl mx-auto">
           {/* Left side text content */} 
           <div className="md:w-2/3 space-y-10">
