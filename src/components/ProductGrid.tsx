@@ -14,8 +14,7 @@ interface Category {
 
 // Helper function to format price in Rupees
 function formatPrice(price: number): string {
-  const priceInRupees = price * 83
-  return `₹${priceInRupees.toLocaleString('en-IN')}`
+  return `₹${price.toLocaleString('en-IN')}`
 }
 
 export function ProductGrid() {

@@ -22,8 +22,7 @@ import { products } from '@/data/products'
 
 // Helper function to format price in Rupees
 function formatPrice(price: number): string {
-  const priceInRupees = price * 83
-  return `₹${priceInRupees.toLocaleString('en-IN')}`
+  return `₹${price.toLocaleString('en-IN')}`
 }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
@@ -108,33 +107,35 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   const productImages = product.images.map(img => img.url)
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-12 bg-black text-white">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         {/* Product Images */}
-        <ProductCarousel images={productImages} />
+        <div className="border border-yellow-500/50 rounded-xl p-4 hover:border-yellow-500 transition-all duration-300">
+          <ProductCarousel images={productImages} />
+        </div>
 
         {/* Product Info */}
         <motion.div
-          className="flex flex-col space-y-8"
+          className="flex flex-col space-y-8 border border-yellow-500/50 rounded-xl p-8 hover:border-yellow-500 transition-all duration-300"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
           {/* Breadcrumb */}
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-400">
             Shop / T-Shirts / {product.name}
           </div>
 
           {/* Product Title and Price */}
           <div>
-            <h1 className="text-2xl font-normal mb-4">{product.name}</h1>
-            <p className="text-xl">{formatPrice(product.price)}</p>
+            <h1 className="text-2xl font-normal mb-4 text-white">{product.name}</h1>
+            <p className="text-xl text-yellow-500">{formatPrice(product.price)}</p>
           </div>
 
           {/* Product Description */}
           <div className="space-y-4 text-sm">
-            <p className="leading-relaxed">{product.description}</p>
-            <ul className="list-disc list-inside space-y-1 text-gray-600">
+            <p className="leading-relaxed text-gray-300">{product.description}</p>
+            <ul className="list-disc list-inside space-y-1 text-gray-400">
               <li>100% Premium Cotton</li>
               <li>Regular fit</li>
               <li>Machine wash</li>
@@ -144,20 +145,20 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
           {/* Color Selection */}
           <div className="space-y-3">
-            <label className="block text-sm">SELECT A COLOR</label>
+            <label className="block text-sm text-gray-300">SELECT A COLOR</label>
             <div className="flex gap-2">
               {product.colors.map((color) => (
                 <button
                   key={color}
                   onClick={() => setSelectedColor(color)}
-                  className={`w-12 h-12 rounded-full border-2 transition-all ${
+                  className={`w-12 h-12 rounded-full transform hover:scale-110 transition-all duration-300 ${
                     selectedColor === color 
-                      ? 'border-black scale-110' 
-                      : 'border-transparent hover:border-gray-300'
+                      ? 'ring-2 ring-yellow-500 ring-offset-2 ring-offset-black' 
+                      : 'hover:ring-2 hover:ring-yellow-500/50 hover:ring-offset-2 hover:ring-offset-black'
                   }`}
                   style={{ 
                     backgroundColor: color.toLowerCase(),
-                    border: color.toLowerCase() === 'white' ? '1px solid #e5e5e5' : undefined
+                    border: color.toLowerCase() === 'white' ? '1px solid #4a4a4a' : 'none'
                   }}
                   title={color}
                 />
@@ -167,21 +168,21 @@ export default function ProductPage({ params }: { params: { id: string } }) {
 
           {/* Size Selection */}
           <div className="space-y-3">
-            <label className="block text-sm">SELECT A SIZE</label>
+            <label className="block text-sm text-gray-300">SELECT A SIZE</label>
             <Select onValueChange={setSelectedSize} value={selectedSize}>
-              <SelectTrigger className="w-full h-14">
+              <SelectTrigger className="w-full h-14 bg-gray-900 border-gray-700 text-white">
                 <SelectValue placeholder="Choose your size" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-gray-900 border-gray-700">
                 {product.size_available.map((size) => (
-                  <SelectItem key={size} value={size} className="cursor-pointer">
+                  <SelectItem key={size} value={size} className="cursor-pointer text-white hover:bg-gray-800">
                     {size}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {selectedSize && (
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-400 mt-2">
                 Selected: {selectedSize}
               </p>
             )}
@@ -190,7 +191,7 @@ export default function ProductPage({ params }: { params: { id: string } }) {
           {/* Add to Cart and Wishlist */}
           <div className="flex gap-3">
             <Button
-              className="flex-1 h-14 text-base bg-black hover:bg-black/90"
+              className="flex-1 h-14 text-base bg-yellow-500 hover:bg-yellow-400 text-black transform hover:scale-[1.02] transition-all duration-300"
               onClick={handleAddToCart}
               disabled={!selectedSize || !selectedColor}
             >
@@ -200,11 +201,15 @@ export default function ProductPage({ params }: { params: { id: string } }) {
             <Button
               variant="outline"
               size="icon"
-              className="h-14 w-14 border-gray-200 hover:border-black hover:bg-white"
+              className={`h-14 w-14 transform hover:scale-110 transition-all duration-300 ${
+                hasItem(product.id)
+                  ? 'border-red-500 bg-red-500/10 hover:bg-red-500/20'
+                  : 'border-gray-700 hover:border-red-500/50'
+              }`}
               onClick={handleWishlistToggle}
             >
               <Heart 
-                className="h-5 w-5" 
+                className={`h-5 w-5 ${hasItem(product.id) ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
                 fill={hasItem(product.id) ? "currentColor" : "none"}
               />
             </Button>

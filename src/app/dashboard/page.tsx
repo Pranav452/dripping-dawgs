@@ -328,7 +328,7 @@ export default function DashboardPage() {
                     </select>
                   </td>
                   <td className="px-6 py-4">
-                    ₹{(order.total_amount * 83).toLocaleString('en-IN')}
+                    ₹{order.total_amount.toLocaleString('en-IN')}
                   </td>
                   <td className="px-6 py-4">
                     {format(new Date(order.created_at), 'MMM d, yyyy')}
