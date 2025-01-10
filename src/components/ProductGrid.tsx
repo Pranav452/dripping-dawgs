@@ -104,7 +104,7 @@ export function ProductGrid() {
                           : 'hover:ring-2 hover:ring-yellow-500/50 hover:ring-offset-2 hover:ring-offset-black'
                       }`}
                       style={{
-                        backgroundColor: color.toLowerCase(),
+                        backgroundColor: color === 'Brown' ? '#8B4513' : color.toLowerCase(),
                         border: color.toLowerCase() === 'white' ? '1px solid #4a4a4a' : 'none'
                       }}
                       title={color}
